@@ -62,6 +62,7 @@ describe('ResultatenComponent', () => {
         spelers.push({ positie: speler.positie, voornaam: speler.speler.voornaam, achternaam: speler.speler.achternaam })
       });
 
+      console.log(new Date);
       expect(spelers.length).toBe(6);
       expect(spelers).toContain({ positie: 'spelverdeler', voornaam: 'A', achternaam: 'A' });
       expect(spelers).toContain({ positie: 'diagonaal', voornaam: 'B', achternaam: 'B' });
@@ -91,6 +92,19 @@ describe('ResultatenComponent', () => {
     const alleSpelers: Array<Speler> = [];
     beforeEach(() => {
       alleSpelers.push(createSpeler(1, 'A', 51, 'spelverdeler'));
+    });
+
+    it('should return the best combinations', () => {
+      const result = component.vindBesteCombinatieBijSet(alleSpelers, 1);
+      expect(result.length).toBe(0);
+    });
+  });
+
+  describe('test 3.1 1 speler', () => {
+
+    const alleSpelers: Array<Speler> = [];
+    beforeEach(() => {
+      alleSpelers.push(createSpeler(1, 'A', 51, 'diagonaal'));
     });
 
     it('should return the best combinations', () => {
@@ -323,67 +337,67 @@ describe('ResultatenComponent', () => {
     });
   });
 
-  // describe('test 11 vind beste bij setnummer', () => {
+  xdescribe('test 11 vind beste bij setnummer', () => {
 
-  //   const alleSpelers: Array<Speler> = [];
+    const alleSpelers: Array<Speler> = [];
 
-  //   beforeEach(() => {
-  //     alleSpelers.push(createSpeler(1, 'A', 51, 'spelverdeler'));
-  //     alleSpelers.push(createSpeler(1, 'B', 50, 'diagonaal'));
-  //     alleSpelers.push(createSpeler(1, 'C', 33, 'midden'));
-  //     alleSpelers.push(createSpeler(1, 'D', 66, 'midden'));
-  //     alleSpelers.push(createSpeler(1, 'E', 34, 'buiten'));
-  //     alleSpelers.push(createSpeler(1, 'F', 67, 'buiten'));
+    beforeEach(() => {
+      alleSpelers.push(createSpeler(1, 'A', 51, 'spelverdeler'));
+      alleSpelers.push(createSpeler(1, 'B', 50, 'diagonaal'));
+      alleSpelers.push(createSpeler(1, 'C', 33, 'midden'));
+      alleSpelers.push(createSpeler(1, 'D', 66, 'midden'));
+      alleSpelers.push(createSpeler(1, 'E', 34, 'buiten'));
+      alleSpelers.push(createSpeler(1, 'F', 67, 'buiten'));
 
-  //     alleSpelers.push(createSpeler(2, 'A', 51, 'spelverdeler'));
-  //     alleSpelers.push(createSpeler(2, 'B', 50, 'diagonaal'));
-  //     alleSpelers.push(createSpeler(2, 'C', 33, 'midden'));
-  //     alleSpelers.push(createSpeler(2, 'G', 49, 'midden'));
-  //     alleSpelers.push(createSpeler(2, 'D', 66, 'midden'));
-  //     alleSpelers.push(createSpeler(2, 'E', 34, 'buiten'));
-  //     alleSpelers.push(createSpeler(2, 'F', 67, 'buiten'));
-  //   });
+      alleSpelers.push(createSpeler(2, 'A', 51, 'spelverdeler'));
+      alleSpelers.push(createSpeler(2, 'B', 50, 'diagonaal'));
+      alleSpelers.push(createSpeler(2, 'C', 33, 'midden'));
+      alleSpelers.push(createSpeler(2, 'G', 49, 'midden'));
+      alleSpelers.push(createSpeler(2, 'D', 66, 'midden'));
+      alleSpelers.push(createSpeler(2, 'E', 34, 'buiten'));
+      alleSpelers.push(createSpeler(2, 'F', 67, 'buiten'));
+    });
 
-  //   it('should return the best combinations for set 1', () => {
+    it('should return the best combinations for set 1', () => {
 
-  //     console.log(new Date);
+      console.log(new Date);
 
-  //     const result = component.vindBesteCombinatieBijSet(alleSpelers, 1);
+      const result = component.vindBesteCombinatieBijSet(alleSpelers, 1);
 
-  //     const spelers: Array<{ positie: string, voornaam: string, achternaam: string }> = [];
+      const spelers: Array<{ positie: string, voornaam: string, achternaam: string }> = [];
 
-  //     result.forEach(speler => {
-  //       spelers.push({ positie: speler.positie, voornaam: speler.speler.voornaam, achternaam: speler.speler.achternaam })
-  //     });
+      result.forEach(speler => {
+        spelers.push({ positie: speler.positie, voornaam: speler.speler.voornaam, achternaam: speler.speler.achternaam })
+      });
 
-  //     expect(spelers.length).toBe(6);
-  //     expect(spelers).toContain({ positie: 'spelverdeler', voornaam: 'A', achternaam: 'A' });
-  //     expect(spelers).toContain({ positie: 'diagonaal', voornaam: 'B', achternaam: 'B' });
-  //     expect(spelers).toContain({ positie: 'midden', voornaam: 'C', achternaam: 'C' });
-  //     expect(spelers).toContain({ positie: 'midden', voornaam: 'D', achternaam: 'D' });
-  //     expect(spelers).toContain({ positie: 'buiten', voornaam: 'E', achternaam: 'E' });
-  //     expect(spelers).toContain({ positie: 'buiten', voornaam: 'F', achternaam: 'F' });
-  //   });
+      expect(spelers.length).toBe(6);
+      expect(spelers).toContain({ positie: 'spelverdeler', voornaam: 'A', achternaam: 'A' });
+      expect(spelers).toContain({ positie: 'diagonaal', voornaam: 'B', achternaam: 'B' });
+      expect(spelers).toContain({ positie: 'midden', voornaam: 'C', achternaam: 'C' });
+      expect(spelers).toContain({ positie: 'midden', voornaam: 'D', achternaam: 'D' });
+      expect(spelers).toContain({ positie: 'buiten', voornaam: 'E', achternaam: 'E' });
+      expect(spelers).toContain({ positie: 'buiten', voornaam: 'F', achternaam: 'F' });
+    });
 
-  //   it('should return the best combinations for set 2', () => {
-  //     const result = component.vindBesteCombinatieBijSet(alleSpelers, 2);
+    it('should return the best combinations for set 2', () => {
+      const result = component.vindBesteCombinatieBijSet(alleSpelers, 2);
 
-  //     const spelers: Array<{ positie: string, voornaam: string, achternaam: string }> = [];
+      const spelers: Array<{ positie: string, voornaam: string, achternaam: string }> = [];
 
-  //     result.forEach(speler => {
-  //       spelers.push({ positie: speler.positie, voornaam: speler.speler.voornaam, achternaam: speler.speler.achternaam })
-  //     });
+      result.forEach(speler => {
+        spelers.push({ positie: speler.positie, voornaam: speler.speler.voornaam, achternaam: speler.speler.achternaam })
+      });
 
-  //     expect(spelers.length).toBe(6);
-  //     expect(spelers).toContain({ positie: 'spelverdeler', voornaam: 'A', achternaam: 'A' });
-  //     expect(spelers).toContain({ positie: 'diagonaal', voornaam: 'B', achternaam: 'B' });
-  //     expect(spelers).toContain({ positie: 'midden', voornaam: 'G', achternaam: 'G' });
-  //     expect(spelers).toContain({ positie: 'midden', voornaam: 'D', achternaam: 'D' });
-  //     expect(spelers).toContain({ positie: 'buiten', voornaam: 'E', achternaam: 'E' });
-  //     expect(spelers).toContain({ positie: 'buiten', voornaam: 'F', achternaam: 'F' });
-  //   });
+      expect(spelers.length).toBe(6);
+      expect(spelers).toContain({ positie: 'spelverdeler', voornaam: 'A', achternaam: 'A' });
+      expect(spelers).toContain({ positie: 'diagonaal', voornaam: 'B', achternaam: 'B' });
+      expect(spelers).toContain({ positie: 'midden', voornaam: 'G', achternaam: 'G' });
+      expect(spelers).toContain({ positie: 'midden', voornaam: 'D', achternaam: 'D' });
+      expect(spelers).toContain({ positie: 'buiten', voornaam: 'E', achternaam: 'E' });
+      expect(spelers).toContain({ positie: 'buiten', voornaam: 'F', achternaam: 'F' });
+    });
 
-  // });
+  });
 
 
   // // test 1

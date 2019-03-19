@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SpelersService } from '../spelers/spelers.service';
 import { Speler } from '../spelers/speler.model';
+import { Prestatie } from '../spelers/prestatie.model';
 
 @Component({
   selector: 'app-resultaten',
@@ -19,55 +20,82 @@ export class ResultatenComponent implements OnInit {
   dummySpeler: Speler = {
     voornaam: 'niet',
     achternaam: 'gevonden',
-    prestaties: [],
-    averagePrestatieBuiten: 0,
-    averagePrestatieMidden: 0,
-    averagePrestatieSpelverdeler: 0,
-    averagePrestatieDiagonaal: 0,
-    averagePrestatieLibero: 0
+    prestaties: []
   };
 
+  buiten: string = 'buiten';
+  midden: string = 'midden';
+  spelverdeler: string = 'spelverdeler';
+  diagonaal: string = 'diagonaal';
+  libero: string = 'libero';
+
   vindBesteCombinatieBijSet(alleSpelers: Array<Speler>, setnummer: number): Array<{ positie: string, speler: Speler }> {
-    // vindBesteCombinatie(): Array<{ positie: string, speler: Speler }> {
-    // const alleSpelers = this.getSpelers();
 
-    const alleBuitenSpelers: Array<Speler> = this.getAlleBuitenSpelers(alleSpelers);
-    const alleBuitenCombinaties: Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> = this.getAlleCombinaties('buiten', alleBuitenSpelers);
+    alleSpelers.forEach(speler => {
+      speler.averagePrestatie = [];
+    });
 
-    const alleMiddenSpelers: Array<Speler> = this.getAlleMiddenSpelers(alleSpelers);
-    const alleMiddenCombinaties: Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> = this.getAlleCombinaties('midden', alleMiddenSpelers);
+    const alleBuitenSpelers: Array<Speler> = this.getAlleSpelers(this.buiten, alleSpelers);
+    const alleBuitenCombinaties: Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> = this.getAlleCombinaties(this.buiten, alleBuitenSpelers);
 
-    const alleSpelverdelers: Array<Speler> = this.getAlleSpelverdelers(alleSpelers);
+    const alleMiddenSpelers: Array<Speler> = this.getAlleSpelers(this.midden, alleSpelers);
+    const alleMiddenCombinaties: Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> = this.getAlleCombinaties(this.midden, alleMiddenSpelers);
+
+    const alleSpelverdelers: Array<Speler> = this.getAlleSpelers(this.spelverdeler, alleSpelers);
     const alleSpelverdelerCombinaties: Array<{ gecombineerdewaarde: number, spelers: Speler[] }> = [];
 
     alleSpelverdelers.forEach(speler => {
-      const spelers: Array<Speler> = []
+      const spelers: Array<Speler> = [];
       spelers.push(speler);
-      alleSpelverdelerCombinaties.push({ gecombineerdewaarde: speler.averagePrestatieSpelverdeler, spelers })
+      if (speler.averagePrestatie !== undefined) {
+        speler.averagePrestatie.forEach(prestatie => {
+          if (prestatie.positie === this.spelverdeler) {
+            alleSpelverdelerCombinaties.push({ gecombineerdewaarde: prestatie.behaaldepunten, spelers });
+          }
+        });
+      } else {
+        speler.averagePrestatie = [];
+        alleSpelverdelerCombinaties.push({ gecombineerdewaarde: 0, spelers });
+      }
     });
 
-    const alleLiberos: Array<Speler> = this.getAlleLiberos(alleSpelers);
+    const alleLiberos: Array<Speler> = this.getAlleSpelers(this.libero, alleSpelers);
     const alleLiberoCombinaties: Array<{ gecombineerdewaarde: number, spelers: Speler[] }> = [];
 
     alleLiberos.forEach(speler => {
       const spelers: Array<Speler> = []
       spelers.push(speler);
-      alleLiberoCombinaties.push({ gecombineerdewaarde: speler.averagePrestatieLibero, spelers })
+      if (speler.averagePrestatie !== undefined) {
+        speler.averagePrestatie.forEach(prestatie => {
+          if (prestatie.positie === this.libero) {
+            alleLiberoCombinaties.push({ gecombineerdewaarde: prestatie.behaaldepunten, spelers });
+          }
+        });
+      } else {
+        speler.averagePrestatie = [];
+        alleLiberoCombinaties.push({ gecombineerdewaarde: 0, spelers });
+      }
     });
 
-    const alleDiagonalen: Array<Speler> = this.getAlleDiagonalen(alleSpelers);
+    const alleDiagonalen: Array<Speler> = this.getAlleSpelers(this.diagonaal, alleSpelers);
     const alleDiagonaalCombinaties: Array<{ gecombineerdewaarde: number, spelers: Speler[] }> = [];
 
     alleDiagonalen.forEach(speler => {
-      const spelers: Array<Speler> = []
+      const spelers: Array<Speler> = [];
       spelers.push(speler);
-      alleDiagonaalCombinaties.push({ gecombineerdewaarde: speler.averagePrestatieDiagonaal, spelers })
+      if (speler.averagePrestatie !== undefined) {
+        speler.averagePrestatie.forEach(prestatie => {
+          if (prestatie.positie === this.diagonaal) {
+            alleDiagonaalCombinaties.push({ gecombineerdewaarde: prestatie.behaaldepunten, spelers });
+          }
+        });
+      } else {
+        speler.averagePrestatie = [];
+        alleDiagonaalCombinaties.push({ gecombineerdewaarde: 0, spelers });
+      }
     });
 
     let alleCombinaties: Array<{ totaleWaarde: number, spelers: Speler[] }> = [];
-
-
-
 
     alleBuitenCombinaties.forEach(buitenCombinatie => {
       alleMiddenCombinaties.forEach(middenCombinatie => {
@@ -93,11 +121,11 @@ export class ResultatenComponent implements OnInit {
               });
 
               const totaleWaarde: number =
-                buitenCombinatie.gecombineerdeWaarde +
-                middenCombinatie.gecombineerdeWaarde +
-                spelverdelerCombinatie.gecombineerdewaarde +
-                liberoCombinatie.gecombineerdewaarde +
-                diagonaalCombinatie.gecombineerdewaarde
+                buitenCombinatie.gecombineerdeWaarde
+                + middenCombinatie.gecombineerdeWaarde
+                + spelverdelerCombinatie.gecombineerdewaarde
+                + liberoCombinatie.gecombineerdewaarde
+                + diagonaalCombinatie.gecombineerdewaarde
                 ;
 
               alleCombinaties.push({ totaleWaarde, spelers });
@@ -109,48 +137,35 @@ export class ResultatenComponent implements OnInit {
 
     alleCombinaties.sort((a, b) => (a.totaleWaarde > b.totaleWaarde) ? -1 : 1);
 
-
-
-
-
-
-
     const spelersCombinaties: Array<{ positie: string, speler: Speler }[]> = [];
     alleCombinaties.forEach(combinatie => {
 
       const spelersInCombinatie: Array<{ positie: string, speler: Speler }> = [];
 
       combinatie.spelers.forEach(speler => {
-
-        if (speler.averagePrestatieBuiten !== 0) {
-          spelersInCombinatie.push({ positie: 'buiten', speler: speler });
-        } else if (speler.averagePrestatieMidden !== 0) {
-          spelersInCombinatie.push({ positie: 'midden', speler: speler });
-        } else if (speler.averagePrestatieDiagonaal !== 0) {
-          spelersInCombinatie.push({ positie: 'diagonaal', speler: speler });
-        } else if (speler.averagePrestatieLibero !== 0) {
-          spelersInCombinatie.push({ positie: 'libero', speler: speler });
-        } else if (speler.averagePrestatieSpelverdeler !== 0) {
-          spelersInCombinatie.push({ positie: 'spelverdeler', speler: speler });
-        }
+        speler.averagePrestatie.forEach(prestatie => {
+          if (prestatie.positie === this.buiten) {
+            spelersInCombinatie.push({ positie: this.buiten, speler: speler });
+          } else if (prestatie.positie === this.midden) {
+            spelersInCombinatie.push({ positie: this.midden, speler: speler });
+          } else if (prestatie.positie === this.diagonaal) {
+            spelersInCombinatie.push({ positie: this.diagonaal, speler: speler });
+          } else if (prestatie.positie === this.libero) {
+            spelersInCombinatie.push({ positie: this.libero, speler: speler });
+          } else if (prestatie.positie === this.spelverdeler) {
+            spelersInCombinatie.push({ positie: this.spelverdeler, speler: speler });
+          }
+        });
       });
 
       spelersCombinaties.push(spelersInCombinatie);
     });
 
 
-
-
-
-
     let besteCombinatie = this.vindBesteCombinatie(spelersCombinaties);
 
     return besteCombinatie;
   }
-
-
-
-
 
   private vindBesteCombinatie(spelersCombinaties: Array<{ positie: string, speler: Speler }[]>): Array<{ positie: string, speler: Speler }> {
 
@@ -185,107 +200,24 @@ export class ResultatenComponent implements OnInit {
     return besteCombinatie;
   }
 
-
-
-
-
-
-  private getAlleBuitenSpelers(alleSpelers: Array<Speler>): Array<Speler> {
-    const buitenSpelers: Array<Speler> = [];
+  private getAlleSpelers(positie: string, alleSpelers: Array<Speler>): Array<Speler> {
+    const spelers: Array<Speler> = [];
     alleSpelers.forEach(speler => {
-      const averagePrestatie = this.getAverageVanPrestaties('buiten', speler);
-      speler.averagePrestatieBuiten = averagePrestatie;
-      if (speler.averagePrestatieBuiten !== 0) {
-        speler.averagePrestatieMidden = 0;
-        speler.averagePrestatieSpelverdeler = 0;
-        speler.averagePrestatieDiagonaal = 0;
-        speler.averagePrestatieLibero = 0;
-        buitenSpelers.push(speler);
-      }
+      const averagePrestatie = this.getAverageVanPrestaties(positie, speler);
+      speler.averagePrestatie.push(averagePrestatie);
+      speler.averagePrestatie.forEach(prestatie => {
+        if (prestatie.positie === positie) {
+          spelers.push(speler);
+        }
+      });
     });
-    if (buitenSpelers.length === 0) {
-      buitenSpelers.push(this.dummySpeler);
+    if (spelers.length === 0) {
+      spelers.push(this.dummySpeler);
     }
-    return buitenSpelers;
+    return spelers;
   }
 
-  private getAlleMiddenSpelers(alleSpelers: Array<Speler>): Array<Speler> {
-    const middenspelers: Array<Speler> = [];
-    alleSpelers.forEach(speler => {
-      const averagePrestatie = this.getAverageVanPrestaties('midden', speler);
-      speler.averagePrestatieMidden = averagePrestatie;
-      if (speler.averagePrestatieMidden !== 0) {
-        speler.averagePrestatieBuiten = 0;
-        speler.averagePrestatieSpelverdeler = 0;
-        speler.averagePrestatieDiagonaal = 0;
-        speler.averagePrestatieLibero = 0;
-        middenspelers.push(speler);
-      }
-    });
-    if (middenspelers.length === 0) {
-      middenspelers.push(this.dummySpeler);
-    }
-    return middenspelers;
-  }
-
-  private getAlleSpelverdelers(alleSpelers: Array<Speler>): Array<Speler> {
-    const spelverdelers: Array<Speler> = [];
-    alleSpelers.forEach(speler => {
-      const averagePrestatie = this.getAverageVanPrestaties('spelverdeler', speler);
-      speler.averagePrestatieSpelverdeler = averagePrestatie;
-      if (speler.averagePrestatieSpelverdeler !== 0) {
-        speler.averagePrestatieBuiten = 0;
-        speler.averagePrestatieMidden = 0;
-        speler.averagePrestatieDiagonaal = 0;
-        speler.averagePrestatieLibero = 0;
-        spelverdelers.push(speler);
-      }
-    });
-    if (spelverdelers.length === 0) {
-      spelverdelers.push(this.dummySpeler);
-    }
-    return spelverdelers;
-  }
-
-  private getAlleLiberos(alleSpelers: Array<Speler>): Array<Speler> {
-    const liberos: Array<Speler> = [];
-    alleSpelers.forEach(speler => {
-      const averagePrestatie = this.getAverageVanPrestaties('libero', speler);
-      speler.averagePrestatieLibero = averagePrestatie;
-      if (speler.averagePrestatieLibero !== 0) {
-        speler.averagePrestatieBuiten = 0;
-        speler.averagePrestatieMidden = 0;
-        speler.averagePrestatieDiagonaal = 0;
-        speler.averagePrestatieSpelverdeler = 0;
-        liberos.push(speler);
-      }
-    });
-    if (liberos.length === 0) {
-      liberos.push(this.dummySpeler);
-    }
-    return liberos;
-  }
-
-  private getAlleDiagonalen(alleSpelers: Array<Speler>): Array<Speler> {
-    const diagonalen: Array<Speler> = [];
-    alleSpelers.forEach(speler => {
-      const averagePrestatie = this.getAverageVanPrestaties('diagonaal', speler);
-      speler.averagePrestatieDiagonaal = averagePrestatie;
-      if (speler.averagePrestatieDiagonaal !== 0) {
-        speler.averagePrestatieBuiten = 0;
-        speler.averagePrestatieMidden = 0;
-        speler.averagePrestatieLibero = 0;
-        speler.averagePrestatieSpelverdeler = 0;
-        diagonalen.push(speler);
-      }
-    });
-    if (diagonalen.length === 0) {
-      diagonalen.push(this.dummySpeler);
-    }
-    return diagonalen;
-  }
-
-  private getAverageVanPrestaties(positie: string, speler: Speler): number {
+  private getAverageVanPrestaties(positie: string, speler: Speler): Prestatie {
     let totalePunten: number = 0;
     let totaleSets: number = 0;
     speler.prestaties.forEach(prestatie => {
@@ -296,9 +228,9 @@ export class ResultatenComponent implements OnInit {
       }
     });
     if (totalePunten !== 0 && totaleSets !== 0) {
-      return totalePunten / totaleSets;
+      return { behaaldepunten: (totalePunten / totaleSets), positie: positie, setnummer: 1 }
     }
-    return 0;
+    return { behaaldepunten: 0, positie: '', setnummer: 0 };
   }
 
   private getAlleCombinaties(positie: string, alleSpelers: Array<Speler>): Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> {
@@ -309,11 +241,23 @@ export class ResultatenComponent implements OnInit {
 
         let gecombineerdeWaarde = 0;
 
-        if (positie === 'buiten') {
-          gecombineerdeWaarde = alleSpelers[i].averagePrestatieBuiten + alleSpelers[j].averagePrestatieBuiten;
+        if (positie === this.buiten) {
+          alleSpelers[i].averagePrestatie.forEach(prestatieSpeler1 => {
+            alleSpelers[j].averagePrestatie.forEach(prestatieSpeler2 => {
+              if (prestatieSpeler1.positie === this.buiten && prestatieSpeler2.positie === this.buiten) {
+                gecombineerdeWaarde = prestatieSpeler1.behaaldepunten + prestatieSpeler2.behaaldepunten;
+              }
+            });
+          });
         }
-        if (positie === 'midden') {
-          gecombineerdeWaarde = alleSpelers[i].averagePrestatieMidden + alleSpelers[j].averagePrestatieMidden;
+        if (positie === this.midden) {
+          alleSpelers[i].averagePrestatie.forEach(prestatieSpeler1 => {
+            alleSpelers[j].averagePrestatie.forEach(prestatieSpeler2 => {
+              if (prestatieSpeler1.positie === this.midden && prestatieSpeler2.positie === this.midden) {
+                gecombineerdeWaarde = prestatieSpeler1.behaaldepunten + prestatieSpeler2.behaaldepunten;
+              }
+            });
+          });
         }
         const spelers: Array<Speler> = [];
         spelers.push(alleSpelers[i]);
