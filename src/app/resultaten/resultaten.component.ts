@@ -36,6 +36,18 @@ export class ResultatenComponent implements OnInit {
       speler.averagePrestatie = [];
     });
 
+    const nieuweSpelers: Array<Speler> = [];
+
+    alleSpelers.forEach(speler => {
+      speler.prestaties.forEach(prestatie => {
+        const prestaties: Array<Prestatie> = [];
+        prestaties.push(prestatie);
+        nieuweSpelers.push({ achternaam: speler.achternaam, voornaam: speler.voornaam, prestaties: prestaties, averagePrestatie: [] });
+      });
+    });
+
+    alleSpelers = nieuweSpelers;
+
     const alleBuitenSpelers: Array<Speler> = this.getAlleSpelers(this.buiten, alleSpelers, setnummer);
     const alleBuitenCombinaties: Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> = this.getAlleCombinaties(this.buiten, alleBuitenSpelers);
 
@@ -138,10 +150,6 @@ export class ResultatenComponent implements OnInit {
 
     alleCombinaties.sort((a, b) => (a.totaleWaarde > b.totaleWaarde) ? -1 : 1);
 
-    console.log(alleCombinaties.length);
-
-
-
     const spelersCombinaties: Array<{ positie: string, speler: Speler, setnummer: number }[]> = [];
     alleCombinaties.forEach(combinatie => {
 
@@ -166,7 +174,6 @@ export class ResultatenComponent implements OnInit {
       spelersCombinaties.push(spelersInCombinatie);
     });
 
-    console.log(spelersCombinaties.length);
     let besteCombinatie = this.vindBesteCombinatie(spelersCombinaties);
 
     return besteCombinatie;
@@ -190,7 +197,10 @@ export class ResultatenComponent implements OnInit {
               for (let j = i + 1; j < combinatie.length; j++) {
                 if (combinatie[i].speler.voornaam === combinatie[j].speler.voornaam &&
                   combinatie[i].speler.achternaam === combinatie[j].speler.achternaam) {
-                  zelfdeGevonden = true;
+
+                  if (combinatie[i].speler.prestaties.length < 2) {
+                    zelfdeGevonden = true;
+                  }
                 }
               }
             }
@@ -244,6 +254,8 @@ export class ResultatenComponent implements OnInit {
   private getAlleCombinaties(positie: string, alleSpelers: Array<Speler>): Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> {
     const allecombinaties: Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> = [];
 
+    const zinvolleSpelers: Array<{ speler: Speler, speler2: Speler }> = [];
+
     for (let i = 0; i < alleSpelers.length - 1; i++) {
       for (let j = i + 1; j < alleSpelers.length; j++) {
 
@@ -252,7 +264,7 @@ export class ResultatenComponent implements OnInit {
         if (positie === this.buiten) {
           alleSpelers[i].averagePrestatie.forEach(prestatieSpeler1 => {
             alleSpelers[j].averagePrestatie.forEach(prestatieSpeler2 => {
-              if (prestatieSpeler1.positie === this.buiten && prestatieSpeler2.positie === this.buiten) {
+              if (prestatieSpeler1.positie === this.buiten && prestatieSpeler2.positie === this.buiten && prestatieSpeler1.setnummer === prestatieSpeler2.setnummer) {
                 gecombineerdeWaarde = prestatieSpeler1.behaaldepunten + prestatieSpeler2.behaaldepunten;
               }
             });
@@ -261,7 +273,7 @@ export class ResultatenComponent implements OnInit {
         if (positie === this.midden) {
           alleSpelers[i].averagePrestatie.forEach(prestatieSpeler1 => {
             alleSpelers[j].averagePrestatie.forEach(prestatieSpeler2 => {
-              if (prestatieSpeler1.positie === this.midden && prestatieSpeler2.positie === this.midden) {
+              if (prestatieSpeler1.positie === this.midden && prestatieSpeler2.positie === this.midden && prestatieSpeler1.setnummer === prestatieSpeler2.setnummer) {
                 gecombineerdeWaarde = prestatieSpeler1.behaaldepunten + prestatieSpeler2.behaaldepunten;
               }
             });
@@ -271,7 +283,28 @@ export class ResultatenComponent implements OnInit {
           const spelers: Array<Speler> = [];
           spelers.push(alleSpelers[i]);
           spelers.push(alleSpelers[j]);
-          allecombinaties.push({ gecombineerdeWaarde, spelers });
+          spelers.sort((a, b) => (a.voornaam > b.voornaam) ? 1 : -1);
+
+          let eersteHetzelfde: boolean = false;
+          let tweedeHetzelfde: boolean = false;
+          if (zinvolleSpelers.length > 0) {
+            zinvolleSpelers.forEach(speler => {
+              if (!eersteHetzelfde) {
+                if (speler.speler.voornaam === spelers[0].voornaam && speler.speler.achternaam === spelers[0].achternaam) {
+                  eersteHetzelfde = true;
+                }
+              } else {
+                if (speler.speler2.voornaam === spelers[1].voornaam && speler.speler2.achternaam === spelers[1].achternaam) {
+                  tweedeHetzelfde = true;
+                }
+              }
+            });
+          }
+
+          if (!eersteHetzelfde || !tweedeHetzelfde) {
+            zinvolleSpelers.push({ speler: alleSpelers[0], speler2: alleSpelers[1] });
+            allecombinaties.push({ gecombineerdeWaarde, spelers });
+          }
         }
       }
     }

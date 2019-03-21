@@ -52,8 +52,6 @@ describe('ResultatenComponent', () => {
 
     it('test 1 starttest', () => {
 
-      console.log(new Date);
-
       const result = component.vindBesteCombinatieBijSet(alleSpelers, 1);
 
       const spelers: Array<{ positie: string, voornaam: string, achternaam: string }> = [];
@@ -62,7 +60,6 @@ describe('ResultatenComponent', () => {
         spelers.push({ positie: speler.positie, voornaam: speler.speler.voornaam, achternaam: speler.speler.achternaam })
       });
 
-      console.log(new Date);
       expect(spelers.length).toBe(6);
       expect(spelers).toContain({ positie: 'spelverdeler', voornaam: 'A', achternaam: 'A' });
       expect(spelers).toContain({ positie: 'diagonaal', voornaam: 'B', achternaam: 'B' });
@@ -127,10 +124,10 @@ describe('ResultatenComponent', () => {
       alleSpelers.push(createSpeler(1, 'A', 51, 'spelverdeler'));
       alleSpelers.push(createSpeler(1, 'B', 50, 'diagonaal'));
       alleSpelers.push(createSpeler(1, 'C', 33, 'midden'));
-      alleSpelers.push(createSpeler(1, 'G', 49, 'midden'));
       alleSpelers.push(createSpeler(1, 'D', 66, 'midden'));
       alleSpelers.push(createSpeler(1, 'E', 34, 'buiten'));
       alleSpelers.push(createSpeler(1, 'F', 67, 'buiten'));
+      alleSpelers.push(createSpeler(1, 'G', 49, 'midden'));
     });
 
     it('should return the best combinations', () => {
@@ -145,10 +142,10 @@ describe('ResultatenComponent', () => {
       expect(spelers.length).toBe(6);
       expect(spelers).toContain({ positie: 'spelverdeler', voornaam: 'A', achternaam: 'A' });
       expect(spelers).toContain({ positie: 'diagonaal', voornaam: 'B', achternaam: 'B' });
-      expect(spelers).toContain({ positie: 'midden', voornaam: 'G', achternaam: 'G' });
       expect(spelers).toContain({ positie: 'midden', voornaam: 'D', achternaam: 'D' });
       expect(spelers).toContain({ positie: 'buiten', voornaam: 'E', achternaam: 'E' });
       expect(spelers).toContain({ positie: 'buiten', voornaam: 'F', achternaam: 'F' });
+      expect(spelers).toContain({ positie: 'midden', voornaam: 'G', achternaam: 'G' });
     });
   });
 
@@ -192,12 +189,13 @@ describe('ResultatenComponent', () => {
     beforeEach(() => {
       alleSpelers.push(createSpeler(1, 'A', 51, 'spelverdeler'));
       alleSpelers.push(createSpeler(1, 'B', 50, 'diagonaal'));
-      alleSpelers.push(createSpeler(1, 'C', 33, 'midden'));
-      alleSpelers.push(createSpeler(1, 'C', 48, 'buiten'));
-      alleSpelers.push(createSpeler(1, 'G', 49, 'midden'));
+      const speler: Speler = createSpeler(1, 'C', 33, 'midden');
+      speler.prestaties.push({behaaldepunten: 48, setnummer: 1, positie: 'buiten'});
+      alleSpelers.push(speler);
       alleSpelers.push(createSpeler(1, 'D', 66, 'midden'));
       alleSpelers.push(createSpeler(1, 'E', 34, 'buiten'));
       alleSpelers.push(createSpeler(1, 'F', 67, 'buiten'));
+      alleSpelers.push(createSpeler(1, 'G', 49, 'midden'));
     });
 
     it('should return the best combinations', () => {
@@ -213,9 +211,9 @@ describe('ResultatenComponent', () => {
       expect(spelers).toContain({ positie: 'spelverdeler', voornaam: 'A', achternaam: 'A' });
       expect(spelers).toContain({ positie: 'diagonaal', voornaam: 'B', achternaam: 'B' });
       expect(spelers).toContain({ positie: 'buiten', voornaam: 'C', achternaam: 'C' });
-      expect(spelers).toContain({ positie: 'midden', voornaam: 'G', achternaam: 'G' });
       expect(spelers).toContain({ positie: 'midden', voornaam: 'D', achternaam: 'D' });
       expect(spelers).toContain({ positie: 'buiten', voornaam: 'F', achternaam: 'F' });
+      expect(spelers).toContain({ positie: 'midden', voornaam: 'G', achternaam: 'G' });
     });
   });
 
@@ -223,15 +221,20 @@ describe('ResultatenComponent', () => {
 
     const alleSpelers: Array<Speler> = [];
     beforeEach(() => {
-      alleSpelers.push(createSpeler(1, 'A', 51, 'spelverdeler'));
-      alleSpelers.push(createSpeler(1, 'A', 99, 'buiten'));
+      const spelerA: Speler = createSpeler(1, 'A', 51, 'spelverdeler');
+      spelerA.prestaties.push({setnummer: 1, behaaldepunten: 99, positie: 'buiten'});
+
+      const spelerC: Speler = createSpeler(1, 'C', 33, 'midden');
+      spelerC.prestaties.push({setnummer: 1, behaaldepunten: 48, positie: 'buiten' });
+
       alleSpelers.push(createSpeler(1, 'B', 50, 'diagonaal'));
-      alleSpelers.push(createSpeler(1, 'C', 33, 'midden'));
-      alleSpelers.push(createSpeler(1, 'C', 48, 'buiten'));
-      alleSpelers.push(createSpeler(1, 'G', 49, 'midden'));
       alleSpelers.push(createSpeler(1, 'D', 66, 'midden'));
       alleSpelers.push(createSpeler(1, 'E', 34, 'buiten'));
       alleSpelers.push(createSpeler(1, 'F', 67, 'buiten'));
+      alleSpelers.push(createSpeler(1, 'G', 49, 'midden'));
+
+      alleSpelers.push(spelerA);
+      alleSpelers.push(spelerC);
     });
 
     it('should return the best combinations', () => {
@@ -258,13 +261,16 @@ describe('ResultatenComponent', () => {
     const alleSpelers: Array<Speler> = [];
     beforeEach(() => {
 
-      alleSpelers.push(createSpeler(1, 'A', 51, 'spelverdeler'));
-      alleSpelers.push(createSpeler(1, 'A', 99, 'buiten'));
+      const spelerA: Speler = createSpeler(1, 'A', 51, 'spelverdeler');
+      spelerA.prestaties.push({setnummer: 1, behaaldepunten: 99, positie: 'buiten'});
+
       alleSpelers.push(createSpeler(1, 'B', 50, 'diagonaal'));
       alleSpelers.push(createSpeler(1, 'C', 33, 'midden'));
-      alleSpelers.push(createSpeler(1, 'G', 49, 'midden'));
       alleSpelers.push(createSpeler(1, 'D', 66, 'midden'));
       alleSpelers.push(createSpeler(1, 'F', 67, 'buiten'));
+      alleSpelers.push(createSpeler(1, 'G', 49, 'midden'));
+
+      alleSpelers.push(spelerA);
     });
 
     it('should return the best combinations', () => {
@@ -276,16 +282,23 @@ describe('ResultatenComponent', () => {
   describe('test 9 complexere situatie', () => {
     const alleSpelers: Array<Speler> = [];
     beforeEach(() => {
-      alleSpelers.push(createSpeler(1, 'A', 51, 'spelverdeler'));
-      alleSpelers.push(createSpeler(1, 'A', 99, 'buiten'));
+      const spelerA: Speler = createSpeler(1, 'A', 51, 'spelverdeler');
+      spelerA.prestaties.push({setnummer: 1, behaaldepunten: 99, positie: 'buiten'});
+
+      const spelerC: Speler = createSpeler(1, 'C', 33, 'midden');
+      spelerC.prestaties.push({setnummer: 1, behaaldepunten: 48, positie: 'buiten' });
+
+      const spelerF: Speler = createSpeler(1, 'F', 67, 'buiten');
+      spelerF.prestaties.push({setnummer: 1, behaaldepunten: 80, positie: 'midden'});
+
       alleSpelers.push(createSpeler(1, 'B', 50, 'diagonaal'));
-      alleSpelers.push(createSpeler(1, 'C', 33, 'midden'));
-      alleSpelers.push(createSpeler(1, 'C', 48, 'buiten'));
-      alleSpelers.push(createSpeler(1, 'G', 49, 'midden'));
       alleSpelers.push(createSpeler(1, 'D', 66, 'midden'));
       alleSpelers.push(createSpeler(1, 'E', 34, 'buiten'));
-      alleSpelers.push(createSpeler(1, 'F', 67, 'buiten'));
-      alleSpelers.push(createSpeler(1, 'F', 80, 'midden'));
+      alleSpelers.push(createSpeler(1, 'G', 49, 'midden'));
+
+      alleSpelers.push(spelerA);
+      alleSpelers.push(spelerC);
+      alleSpelers.push(spelerF);
     });
 
     it('should return the best combination', () => {
@@ -310,18 +323,29 @@ describe('ResultatenComponent', () => {
   describe('test 10 nog complexer', () => {
     const alleSpelers: Array<Speler> = [];
     beforeEach(() => {
-      alleSpelers.push(createSpeler(1, 'A', 51, 'spelverdeler'));
-      alleSpelers.push(createSpeler(1, 'A', 99, 'buiten'));
-      alleSpelers.push(createSpeler(1, 'B', 50, 'diagonaal'));
-      alleSpelers.push(createSpeler(1, 'B', 47, 'spelverdeler'));
-      alleSpelers.push(createSpeler(1, 'C', 33, 'midden'));
-      alleSpelers.push(createSpeler(1, 'C', 48, 'buiten'));
-      alleSpelers.push(createSpeler(1, 'G', 49, 'midden'));
-      alleSpelers.push(createSpeler(1, 'G', 59, 'diagonaal'));
+      const spelerA: Speler = createSpeler(1, 'A', 51, 'spelverdeler');
+      spelerA.prestaties.push({setnummer: 1, behaaldepunten: 99, positie: 'buiten'});
+
+      const spelerB: Speler = createSpeler(1, 'B', 50, 'diagonaal');
+      spelerB.prestaties.push({setnummer: 1, behaaldepunten: 47, positie: 'spelverdeler'});
+
+      const spelerC: Speler = createSpeler(1, 'C', 33, 'midden');
+      spelerC.prestaties.push({setnummer: 1, behaaldepunten: 48, positie: 'buiten' });
+
+      const spelerF: Speler = createSpeler(1, 'F', 67, 'buiten');
+      spelerF.prestaties.push({setnummer: 1, behaaldepunten: 80, positie: 'midden'});
+
+      const spelerG: Speler = createSpeler(1, 'G', 49, 'midden');
+      spelerG.prestaties.push({setnummer: 1, behaaldepunten: 59, positie: 'diagonaal'});
+
       alleSpelers.push(createSpeler(1, 'D', 66, 'midden'));
       alleSpelers.push(createSpeler(1, 'E', 34, 'buiten'));
-      alleSpelers.push(createSpeler(1, 'F', 67, 'buiten'));
-      alleSpelers.push(createSpeler(1, 'F', 80, 'midden'));
+
+      alleSpelers.push(spelerA);
+      alleSpelers.push(spelerB);
+      alleSpelers.push(spelerC);
+      alleSpelers.push(spelerF);
+      alleSpelers.push(spelerG);
     });
 
     it('should return the best combination', () => {
@@ -365,8 +389,6 @@ describe('ResultatenComponent', () => {
     });
 
     it('should return the best combinations for set 1', () => {
-
-      console.log(new Date);
 
       const result = component.vindBesteCombinatieBijSet(alleSpelers, 1);
 
@@ -427,8 +449,6 @@ describe('ResultatenComponent', () => {
 
     it('should return the best combinations for set 1', () => {
 
-      console.log(new Date);
-
       const result = component.vindBesteCombinatieBijSet(alleSpelers, 1);
 
       const spelers: Array<{ positie: string, voornaam: string, achternaam: string }> = [];
@@ -473,8 +493,6 @@ describe('ResultatenComponent', () => {
     });
 
     it('should return the best combinations for set 2', () => {
-
-      console.log(new Date);
 
       const result = component.vindBesteCombinatieBijSet(alleSpelers, 2);
 
@@ -523,7 +541,7 @@ describe('ResultatenComponent', () => {
 
     const alleSpelers: Array<Speler> = [];
 
-    beforeEach(() => {
+    beforeAll(() => {
       alleSpelers.push(createSpeler(1, 'A', 51, 'spelverdeler'));
       alleSpelers.push(createSpeler(3, 'E', 34, 'buiten'));
       alleSpelers.push(createSpeler(3, 'F', 67, 'buiten'));
@@ -583,7 +601,7 @@ describe('ResultatenComponent', () => {
       expect(spelers).toContain({ positie: 'buiten', voornaam: 'F', achternaam: 'F' });
     });
 
-    fit('should give the proper setup for set 2', () => {
+    it('should give the proper setup for set 2', () => {
       const result = component.vindBesteCombinatieBijSet(alleSpelers, 2);
 
       const spelers: Array<{ positie: string, voornaam: string, achternaam: string }> = [];
@@ -601,7 +619,7 @@ describe('ResultatenComponent', () => {
       expect(spelers).toContain({ positie: 'buiten', voornaam: 'F', achternaam: 'F' });
     });
 
-    fit('should give the proper setup for set 3', () => {
+    it('should give the proper setup for set 3', () => {
       const result = component.vindBesteCombinatieBijSet(alleSpelers, 3);
 
       const spelers: Array<{ positie: string, voornaam: string, achternaam: string }> = [];
@@ -619,7 +637,7 @@ describe('ResultatenComponent', () => {
       expect(spelers).toContain({ positie: 'buiten', voornaam: 'F', achternaam: 'F' });
     });
 
-    fit('should give the proper setup for set 4', () => {
+    it('should give the proper setup for set 4', () => {
       const result = component.vindBesteCombinatieBijSet(alleSpelers, 4);
 
       const spelers: Array<{ positie: string, voornaam: string, achternaam: string }> = [];
@@ -637,7 +655,7 @@ describe('ResultatenComponent', () => {
       expect(spelers).toContain({ positie: 'midden', voornaam: 'F', achternaam: 'F' });
     });
 
-    fit('should give the proper setup for set 5', () => {
+    it('should give the proper setup for set 5', () => {
       const result = component.vindBesteCombinatieBijSet(alleSpelers, 5);
 
       const spelers: Array<{ positie: string, voornaam: string, achternaam: string }> = [];
