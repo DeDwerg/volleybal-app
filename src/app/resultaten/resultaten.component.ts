@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { SpelersService } from '../spelers/spelers.service';
 import { Speler } from '../spelers/speler.model';
 import { Prestatie } from '../spelers/prestatie.model';
-import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-resultaten',
@@ -18,300 +17,178 @@ export class ResultatenComponent implements OnInit {
   ngOnInit() {
   }
 
-  dummySpeler: Speler = {
-    voornaam: 'niet',
-    achternaam: 'gevonden',
-    prestaties: []
-  };
+  vindBesteCombinatieBijSet(setnummer: number): Array<{ positie: string, voornaam: string, achternaam: string }> {
 
-  buiten: string = 'buiten';
-  midden: string = 'midden';
-  spelverdeler: string = 'spelverdeler';
-  diagonaal: string = 'diagonaal';
-  libero: string = 'libero';
+    const spelers: Array<Speler> = this.spelersService.getSpelers();
 
-  vindBesteCombinatieBijSet(alleSpelers: Array<Speler>, setnummer: number): Array<{ positie: string, speler: Speler, setnummer: number }> {
+    const spelersMet1Prestatie: Array<Speler> = [];
 
-    alleSpelers.forEach(speler => {
-      speler.averagePrestatie = [];
-    });
+    spelers.forEach(speler => {
+      if (speler.prestaties.length > 1) {
+        for (let i = 0; i < speler.prestaties.length - 1; i++) {
+          for (let j = i + 1; j < speler.prestaties.length; j++) {
+            if (speler.prestaties[i].positie === speler.prestaties[j].positie &&
+              speler.prestaties[i].setnummer === speler.prestaties[j].setnummer) {
+              // 2x op zelfde positie gespeeld in dezelfde set
+              const indexI = speler.prestaties.indexOf(speler.prestaties[i]);
+              const indexJ = speler.prestaties.indexOf(speler.prestaties[j]);
 
-    const nieuweSpelers: Array<Speler> = [];
+              const gemiddeldeGehaaldePunten = (speler.prestaties[i].percentageWinst + speler.prestaties[j].percentageWinst) / 2;
+              let gemiddeldePrestatie: Prestatie = { percentageWinst: gemiddeldeGehaaldePunten, setnummer: speler.prestaties[i].setnummer, positie: speler.prestaties[i].positie};
 
-    alleSpelers.forEach(speler => {
-      speler.prestaties.forEach(prestatie => {
-        const prestaties: Array<Prestatie> = [];
-        prestaties.push(prestatie);
-        nieuweSpelers.push({ achternaam: speler.achternaam, voornaam: speler.voornaam, prestaties: prestaties, averagePrestatie: [] });
-      });
-    });
+              speler.prestaties.splice(indexJ, 1); // volgorde afhankelijk
+              speler.prestaties.splice(indexI, 1);
 
-    alleSpelers = nieuweSpelers;
+              speler.prestaties.push(gemiddeldePrestatie);
 
-    const alleBuitenSpelers: Array<Speler> = this.getAlleSpelers(this.buiten, alleSpelers, setnummer);
-    const alleBuitenCombinaties: Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> = this.getAlleCombinaties(this.buiten, alleBuitenSpelers);
-
-    const alleMiddenSpelers: Array<Speler> = this.getAlleSpelers(this.midden, alleSpelers, setnummer);
-    const alleMiddenCombinaties: Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> = this.getAlleCombinaties(this.midden, alleMiddenSpelers);
-
-    const alleSpelverdelers: Array<Speler> = this.getAlleSpelers(this.spelverdeler, alleSpelers, setnummer);
-    const alleSpelverdelerCombinaties: Array<{ gecombineerdewaarde: number, spelers: Speler[] }> = [];
-
-    alleSpelverdelers.forEach(speler => {
-      const spelers: Array<Speler> = [];
-      spelers.push(speler);
-      if (speler.averagePrestatie !== undefined) {
-        speler.averagePrestatie.forEach(prestatie => {
-          if (prestatie.positie === this.spelverdeler) {
-            alleSpelverdelerCombinaties.push({ gecombineerdewaarde: prestatie.behaaldepunten, spelers });
+            }
+          }
+        }
+        speler.prestaties.forEach(prestatie => {
+          if (prestatie.setnummer === setnummer) {
+            const spelerMet1Prestatie: Speler = { voornaam: speler.voornaam, achternaam: speler.achternaam, prestaties: [prestatie] };
+            spelersMet1Prestatie.push(spelerMet1Prestatie);
           }
         });
       } else {
-        speler.averagePrestatie = [];
-        alleSpelverdelerCombinaties.push({ gecombineerdewaarde: 0, spelers });
+        if (speler.prestaties[0].setnummer === setnummer) {
+          spelersMet1Prestatie.push(speler);
+        }
       }
     });
 
-    const alleLiberos: Array<Speler> = this.getAlleSpelers(this.libero, alleSpelers, setnummer);
-    const alleLiberoCombinaties: Array<{ gecombineerdewaarde: number, spelers: Speler[] }> = [];
+    let buitenSpelers: Array<Speler> = [];
+    let middenSpelers: Array<Speler> = [];
+    let spelverdelers: Array<Speler> = [];
+    let diagonalen: Array<Speler> = [];
 
-    alleLiberos.forEach(speler => {
-      const spelers: Array<Speler> = []
-      spelers.push(speler);
-      if (speler.averagePrestatie !== undefined) {
-        speler.averagePrestatie.forEach(prestatie => {
-          if (prestatie.positie === this.libero) {
-            alleLiberoCombinaties.push({ gecombineerdewaarde: prestatie.behaaldepunten, spelers });
-          }
-        });
-      } else {
-        speler.averagePrestatie = [];
-        alleLiberoCombinaties.push({ gecombineerdewaarde: 0, spelers });
+    spelersMet1Prestatie.forEach(speler => {
+      switch (speler.prestaties[0].positie) {
+        case 'buiten':
+          buitenSpelers.push(speler);
+          buitenSpelers = this.sorteerSpelersOppercentageWinst(buitenSpelers);
+          break;
+        case 'midden':
+          middenSpelers.push(speler);
+          middenSpelers = this.sorteerSpelersOppercentageWinst(middenSpelers);
+          break;
+        case 'spelverdeler':
+          spelverdelers.push(speler);
+          spelverdelers = this.sorteerSpelersOppercentageWinst(spelverdelers);
+          break;
+        case 'diagonaal':
+          diagonalen.push(speler);
+          diagonalen = this.sorteerSpelersOppercentageWinst(diagonalen);
+          break;
       }
     });
 
-    const alleDiagonalen: Array<Speler> = this.getAlleSpelers(this.diagonaal, alleSpelers, setnummer);
-    const alleDiagonaalCombinaties: Array<{ gecombineerdewaarde: number, spelers: Speler[] }> = [];
+    let buitenCombinaties: Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> = [];
+    let middenCombinaties: Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> = [];
 
-    alleDiagonalen.forEach(speler => {
-      const spelers: Array<Speler> = [];
-      spelers.push(speler);
-      if (speler.averagePrestatie !== undefined) {
-        speler.averagePrestatie.forEach(prestatie => {
-          if (prestatie.positie === this.diagonaal) {
-            alleDiagonaalCombinaties.push({ gecombineerdewaarde: prestatie.behaaldepunten, spelers });
-          }
-        });
-      } else {
-        speler.averagePrestatie = [];
-        alleDiagonaalCombinaties.push({ gecombineerdewaarde: 0, spelers });
-      }
-    });
+    if (buitenSpelers.length >= 2) {
+      buitenCombinaties = this.getCombinaties(buitenSpelers);
+    } else if (buitenSpelers.length < 2) {
+      return []; // geen combinatie gevonden
+    }
 
-    let alleCombinaties: Array<{ totaleWaarde: number, spelers: Speler[] }> = [];
+    if (middenSpelers.length >= 2) {
+      middenCombinaties = this.getCombinaties(middenSpelers);
+    } else if (middenSpelers.length < 2) {
+      return [];
+    }
 
-    alleBuitenCombinaties.forEach(buitenCombinatie => {
-      alleMiddenCombinaties.forEach(middenCombinatie => {
-        alleSpelverdelerCombinaties.forEach(spelverdelerCombinatie => {
-          alleLiberoCombinaties.forEach(liberoCombinatie => {
-            alleDiagonaalCombinaties.forEach(diagonaalCombinatie => {
+    if (spelverdelers.length < 1) {
+      return [];
+    }
 
-              let spelers: Array<Speler> = [];
-              buitenCombinatie.spelers.forEach(speler => {
-                spelers.push(speler);
-              });
-              middenCombinatie.spelers.forEach(speler => {
-                spelers.push(speler);
-              });
-              spelverdelerCombinatie.spelers.forEach(speler => {
-                spelers.push(speler);
-              });
-              liberoCombinatie.spelers.forEach(speler => {
-                spelers.push(speler);
-              });
-              diagonaalCombinatie.spelers.forEach(speler => {
-                spelers.push(speler);
-              });
+    if (diagonalen.length < 1) {
+      return [];
+    }
 
-              const totaleWaarde: number =
-                buitenCombinatie.gecombineerdeWaarde
-                + middenCombinatie.gecombineerdeWaarde
-                + spelverdelerCombinatie.gecombineerdewaarde
-                + liberoCombinatie.gecombineerdewaarde
-                + diagonaalCombinatie.gecombineerdewaarde
-                ;
+    let gevondenTeamOpstellingen: Array<{ totaleWaarde: number, spelers: Speler[] }> = [];
 
-              alleCombinaties.push({ totaleWaarde, spelers });
+    buitenCombinaties.forEach(buitenCombinaties => {
+      middenCombinaties.forEach(middenCombinatie => {
+        spelverdelers.forEach(spelverdeler => {
+          diagonalen.forEach(diagonaal => {
+
+            const temporaryOpstelling: Array<Speler> = [];
+            let totaleWaarde: number = 0;
+
+            buitenCombinaties.spelers.forEach(buitenSpeler => {
+              temporaryOpstelling.push(buitenSpeler);
+              totaleWaarde = totaleWaarde + buitenSpeler.prestaties[0].percentageWinst;
             });
-          });
-        });
-      });
-    });
 
-    alleCombinaties.sort((a, b) => (a.totaleWaarde > b.totaleWaarde) ? -1 : 1);
+            middenCombinatie.spelers.forEach(middenSpeler => {
+              temporaryOpstelling.push(middenSpeler);
+              totaleWaarde = totaleWaarde + middenSpeler.prestaties[0].percentageWinst;
+            });
 
-    const spelersCombinaties: Array<{ positie: string, speler: Speler, setnummer: number }[]> = [];
-    alleCombinaties.forEach(combinatie => {
+            temporaryOpstelling.push(spelverdeler);
+            totaleWaarde = totaleWaarde + spelverdeler.prestaties[0].percentageWinst;
 
-      const spelersInCombinatie: Array<{ positie: string, speler: Speler, setnummer: number }> = [];
+            temporaryOpstelling.push(diagonaal);
+            totaleWaarde = totaleWaarde + diagonaal.prestaties[0].percentageWinst;
 
-      combinatie.spelers.forEach(speler => {
-        speler.averagePrestatie.forEach(prestatie => {
-          if (prestatie.positie === this.buiten) {
-            spelersInCombinatie.push({ positie: this.buiten, speler: speler, setnummer: prestatie.setnummer });
-          } else if (prestatie.positie === this.midden) {
-            spelersInCombinatie.push({ positie: this.midden, speler: speler, setnummer: prestatie.setnummer });
-          } else if (prestatie.positie === this.diagonaal) {
-            spelersInCombinatie.push({ positie: this.diagonaal, speler: speler, setnummer: prestatie.setnummer });
-          } else if (prestatie.positie === this.libero) {
-            spelersInCombinatie.push({ positie: this.libero, speler: speler, setnummer: prestatie.setnummer });
-          } else if (prestatie.positie === this.spelverdeler) {
-            spelersInCombinatie.push({ positie: this.spelverdeler, speler: speler, setnummer: prestatie.setnummer });
-          }
-        });
-      });
+            let zelfdeSpelerOpMeerderePosities: boolean = false;
 
-      spelersCombinaties.push(spelersInCombinatie);
-    });
-
-    let besteCombinatie = this.vindBesteCombinatie(spelersCombinaties);
-
-    return besteCombinatie;
-  }
-
-  private vindBesteCombinatie(spelersCombinaties: Array<{ positie: string, speler: Speler }[]>): Array<{ positie: string, speler: Speler, setnummer: number }> {
-
-    const besteCombinatie: Array<{ positie: string, speler: Speler, setnummer: number }> = [];
-
-    let counter = spelersCombinaties.length;
-
-    for (let set = 1; set < 6; set++) {
-      for (let i = counter; i > 0; i--) {
-
-        spelersCombinaties.forEach(combinatie => {
-
-          if (besteCombinatie.length === 0) {
-            let zelfdeGevonden = false;
-
-            for (let i = 0; i < combinatie.length - 1; i++) {
-              for (let j = i + 1; j < combinatie.length; j++) {
-                if (combinatie[i].speler.voornaam === combinatie[j].speler.voornaam &&
-                  combinatie[i].speler.achternaam === combinatie[j].speler.achternaam) {
-
-                  if (combinatie[i].speler.prestaties.length < 2) {
-                    zelfdeGevonden = true;
-                  }
+            for (let i = 0; i < temporaryOpstelling.length - 1; i++) {
+              for (let j = i + 1; j < temporaryOpstelling.length; j++) {
+                if (temporaryOpstelling[i].voornaam === temporaryOpstelling[j].voornaam &&
+                  temporaryOpstelling[i].achternaam === temporaryOpstelling[j].achternaam
+                ) {
+                  zelfdeSpelerOpMeerderePosities = true;
                 }
               }
             }
 
-            if (!zelfdeGevonden) {
-              combinatie.forEach(element => {
-                besteCombinatie.push({ positie: element.positie, speler: element.speler, setnummer: element.speler.averagePrestatie[0].setnummer });
-              });
+            if (!zelfdeSpelerOpMeerderePosities) {
+              gevondenTeamOpstellingen.push({ totaleWaarde: totaleWaarde, spelers: temporaryOpstelling });
             }
-          }
+          });
         });
-      }
-    }
-
-    return besteCombinatie;
-  }
-
-  private getAlleSpelers(positie: string, alleSpelers: Array<Speler>, setnummer: number): Array<Speler> {
-    const spelers: Array<Speler> = [];
-    alleSpelers.forEach(speler => {
-      const averagePrestatie = this.getAverageVanPrestaties(positie, speler, setnummer);
-      speler.averagePrestatie.push(averagePrestatie);
-      speler.averagePrestatie.forEach(prestatie => {
-        if (prestatie.positie === positie) {
-          spelers.push(speler);
-        }
       });
     });
-    if (spelers.length === 0) {
-      spelers.push(this.dummySpeler);
-    }
-    return spelers;
-  }
 
-  private getAverageVanPrestaties(positie: string, speler: Speler, setnummer: number): Prestatie {
-    let totalePunten: number = 0;
-    let totaleSets: number = 0;
-    speler.prestaties.forEach(prestatie => {
-      if (prestatie.positie === positie && prestatie.setnummer === setnummer) {
-        totalePunten = totalePunten + prestatie.behaaldepunten;
-        prestatie.behaaldepunten;
-        totaleSets = totaleSets + 1;
-      }
+    if (gevondenTeamOpstellingen.length === 0) { // dit kan als er 6+ spelers zijn maar geen team gevormd kan worden.
+      return [];
+    }
+
+    gevondenTeamOpstellingen = gevondenTeamOpstellingen.sort((a, b) => (a.totaleWaarde > b.totaleWaarde) ? -1 : 1);
+
+    const besteOpstelling: Array<{ positie: string, voornaam: string, achternaam: string }> = [];
+
+    gevondenTeamOpstellingen[0].spelers.forEach(speler => {
+      besteOpstelling.push({ positie: speler.prestaties[0].positie, voornaam: speler.voornaam, achternaam: speler.achternaam });
     });
-    if (totalePunten !== 0 && totaleSets !== 0) {
-      return { behaaldepunten: (totalePunten / totaleSets), positie: positie, setnummer: setnummer }
-    }
-    return { behaaldepunten: 0, positie: '', setnummer: 0 };
+
+    return besteOpstelling;
   }
 
-  private getAlleCombinaties(positie: string, alleSpelers: Array<Speler>): Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> {
-    const allecombinaties: Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> = [];
+  private getCombinaties(spelers: Array<Speler>): Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> {
 
-    const zinvolleSpelers: Array<{ speler: Speler, speler2: Speler }> = [];
+    let result: Array<{ gecombineerdeWaarde: number, spelers: Speler[] }> = [];
 
-    for (let i = 0; i < alleSpelers.length - 1; i++) {
-      for (let j = i + 1; j < alleSpelers.length; j++) {
+    for (let i = 0; i < spelers.length - 1; i++) {
+      for (let j = i + 1; j < spelers.length; j++) {
 
-        let gecombineerdeWaarde = 0;
+        const gecombineerdeWaarde = spelers[i].prestaties[0].percentageWinst + spelers[j].prestaties[0].percentageWinst;
+        const combinatie: Array<Speler> = [];
+        combinatie.push(spelers[i]);
+        combinatie.push(spelers[j]);
 
-        if (positie === this.buiten) {
-          alleSpelers[i].averagePrestatie.forEach(prestatieSpeler1 => {
-            alleSpelers[j].averagePrestatie.forEach(prestatieSpeler2 => {
-              if (prestatieSpeler1.positie === this.buiten && prestatieSpeler2.positie === this.buiten && prestatieSpeler1.setnummer === prestatieSpeler2.setnummer) {
-                gecombineerdeWaarde = prestatieSpeler1.behaaldepunten + prestatieSpeler2.behaaldepunten;
-              }
-            });
-          });
-        }
-        if (positie === this.midden) {
-          alleSpelers[i].averagePrestatie.forEach(prestatieSpeler1 => {
-            alleSpelers[j].averagePrestatie.forEach(prestatieSpeler2 => {
-              if (prestatieSpeler1.positie === this.midden && prestatieSpeler2.positie === this.midden && prestatieSpeler1.setnummer === prestatieSpeler2.setnummer) {
-                gecombineerdeWaarde = prestatieSpeler1.behaaldepunten + prestatieSpeler2.behaaldepunten;
-              }
-            });
-          });
-        }
-        if (gecombineerdeWaarde !== 0) {
-          const spelers: Array<Speler> = [];
-          spelers.push(alleSpelers[i]);
-          spelers.push(alleSpelers[j]);
-          spelers.sort((a, b) => (a.voornaam > b.voornaam) ? 1 : -1);
-
-          let eersteHetzelfde: boolean = false;
-          let tweedeHetzelfde: boolean = false;
-          if (zinvolleSpelers.length > 0) {
-            zinvolleSpelers.forEach(speler => {
-              if (!eersteHetzelfde) {
-                if (speler.speler.voornaam === spelers[0].voornaam && speler.speler.achternaam === spelers[0].achternaam) {
-                  eersteHetzelfde = true;
-                }
-              } else {
-                if (speler.speler2.voornaam === spelers[1].voornaam && speler.speler2.achternaam === spelers[1].achternaam) {
-                  tweedeHetzelfde = true;
-                }
-              }
-            });
-          }
-
-          if (!eersteHetzelfde || !tweedeHetzelfde) {
-            zinvolleSpelers.push({ speler: alleSpelers[0], speler2: alleSpelers[1] });
-            allecombinaties.push({ gecombineerdeWaarde, spelers });
-          }
-        }
+        result.push({ gecombineerdeWaarde: gecombineerdeWaarde, spelers: combinatie })
       }
     }
-    return allecombinaties;
+
+    result = result.sort((a, b) => (a.gecombineerdeWaarde > b.gecombineerdeWaarde) ? -1 : 1); // sortering kan verkeerdom zijn.
+    return result;
   }
 
-  getSpelers(): Array<Speler> {
-    return this.spelersService.getSpelers();
+  // sortering met 1 item in array geeft geen problemen.
+  private sorteerSpelersOppercentageWinst(spelers: Array<Speler>): Array<Speler> {
+    return spelers.sort((a, b) => (a.prestaties[0].percentageWinst > b.prestaties[0].percentageWinst) ? -1 : 1);
   }
 }

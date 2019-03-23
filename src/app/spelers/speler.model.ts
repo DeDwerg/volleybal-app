@@ -4,5 +4,4 @@ export class Speler {
   voornaam: string;
   achternaam: string;
   prestaties: Array<Prestatie>;
-  averagePrestatie?: Array<Prestatie>
 }
