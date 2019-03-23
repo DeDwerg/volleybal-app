@@ -895,5 +895,34 @@ describe('ResultatenComponent', () => {
     });
   });
 
+  describe('if a player is not present', () => {
+    beforeEach(() => {
+      spelersService.addSpeler(createSpeler(1, 'A', 51, 'spelverdeler'));
+      spelersService.addSpeler(createSpeler(1, 'B', 50, 'diagonaal'));
+      spelersService.addSpeler(createSpeler(1, 'C', 33, 'midden'));
+      spelersService.addSpeler(createSpeler(1, 'D', 66, 'midden'));
+      spelersService.addSpeler(createSpeler(1, 'E', 34, 'buiten'));
+
+      const spelerF: Speler = createSpeler(1, 'F', 67, 'buiten');
+      spelersService.addSpeler(spelerF);
+      spelersService.addSpeler(createSpeler(1, 'G', 1, 'buiten'));
+
+      spelersService.setSpelerUnavailable(spelerF);
+    });
+
+    it('test 1 starttest', () => {
+
+      const result = component.vindBesteCombinatieBijSet(1);
+
+      expect(result.length).toBe(6);
+      expect(result).toContain({ positie: 'spelverdeler', voornaam: 'A', achternaam: 'A' });
+      expect(result).toContain({ positie: 'diagonaal', voornaam: 'B', achternaam: 'B' });
+      expect(result).toContain({ positie: 'midden', voornaam: 'C', achternaam: 'C' });
+      expect(result).toContain({ positie: 'midden', voornaam: 'D', achternaam: 'D' });
+      expect(result).toContain({ positie: 'buiten', voornaam: 'E', achternaam: 'E' });
+      expect(result).toContain({ positie: 'buiten', voornaam: 'G', achternaam: 'G' });
+    });
+  });
+
 
 });
