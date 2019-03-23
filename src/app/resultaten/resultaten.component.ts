@@ -17,6 +17,10 @@ export class ResultatenComponent implements OnInit {
   ngOnInit() {
   }
 
+  private isZelfdePositieInZelfdeSetnummer(prestatieA: Prestatie, prestatieB: Prestatie): boolean {
+    return prestatieA.positie === prestatieB.positie && prestatieA.setnummer === prestatieB.setnummer;
+  }
+
   vindBesteCombinatieBijSet(setnummer: number): Array<{ positie: string, voornaam: string, achternaam: string }> {
 
     const spelers: Array<Speler> = this.spelersService.getSpelers();
@@ -27,20 +31,15 @@ export class ResultatenComponent implements OnInit {
       if (speler.prestaties.length > 1) {
         for (let i = 0; i < speler.prestaties.length - 1; i++) {
           for (let j = i + 1; j < speler.prestaties.length; j++) {
-            if (speler.prestaties[i].positie === speler.prestaties[j].positie &&
-              speler.prestaties[i].setnummer === speler.prestaties[j].setnummer) {
-              // 2x op zelfde positie gespeeld in dezelfde set
+            if (this.isZelfdePositieInZelfdeSetnummer(speler.prestaties[i], speler.prestaties[j])) {
               const indexI = speler.prestaties.indexOf(speler.prestaties[i]);
               const indexJ = speler.prestaties.indexOf(speler.prestaties[j]);
 
               const gemiddeldeGehaaldePunten = (speler.prestaties[i].percentageWinst + speler.prestaties[j].percentageWinst) / 2;
-              let gemiddeldePrestatie: Prestatie = { percentageWinst: gemiddeldeGehaaldePunten, setnummer: speler.prestaties[i].setnummer, positie: speler.prestaties[i].positie};
-
-              speler.prestaties.splice(indexJ, 1); // volgorde afhankelijk
-              speler.prestaties.splice(indexI, 1);
-
+              let gemiddeldePrestatie: Prestatie = { percentageWinst: gemiddeldeGehaaldePunten, setnummer: speler.prestaties[i].setnummer, positie: speler.prestaties[i].positie };
               speler.prestaties.push(gemiddeldePrestatie);
-
+              speler.prestaties.splice(indexI, 1);
+              speler.prestaties.splice(indexJ, 1);
             }
           }
         }
@@ -65,20 +64,22 @@ export class ResultatenComponent implements OnInit {
     spelersMet1Prestatie.forEach(speler => {
       switch (speler.prestaties[0].positie) {
         case 'buiten':
+        case 'libero_buiten':
           buitenSpelers.push(speler);
-          buitenSpelers = this.sorteerSpelersOppercentageWinst(buitenSpelers);
+          buitenSpelers = this.sorteerSpelersOpPercentageWinst(buitenSpelers);
           break;
         case 'midden':
+        case 'libero_midden':
           middenSpelers.push(speler);
-          middenSpelers = this.sorteerSpelersOppercentageWinst(middenSpelers);
+          middenSpelers = this.sorteerSpelersOpPercentageWinst(middenSpelers);
           break;
         case 'spelverdeler':
           spelverdelers.push(speler);
-          spelverdelers = this.sorteerSpelersOppercentageWinst(spelverdelers);
+          spelverdelers = this.sorteerSpelersOpPercentageWinst(spelverdelers);
           break;
         case 'diagonaal':
           diagonalen.push(speler);
-          diagonalen = this.sorteerSpelersOppercentageWinst(diagonalen);
+          diagonalen = this.sorteerSpelersOpPercentageWinst(diagonalen);
           break;
       }
     });
@@ -136,10 +137,17 @@ export class ResultatenComponent implements OnInit {
 
             for (let i = 0; i < temporaryOpstelling.length - 1; i++) {
               for (let j = i + 1; j < temporaryOpstelling.length; j++) {
-                if (temporaryOpstelling[i].voornaam === temporaryOpstelling[j].voornaam &&
-                  temporaryOpstelling[i].achternaam === temporaryOpstelling[j].achternaam
-                ) {
-                  zelfdeSpelerOpMeerderePosities = true;
+                if (this.isZelfdeSpeler(temporaryOpstelling[i], temporaryOpstelling[j])) {
+                  if(temporaryOpstelling[i].prestaties[0].positie.startsWith('libero')) {
+                    const liberoIndex = temporaryOpstelling.indexOf(temporaryOpstelling[i]);
+                    temporaryOpstelling.splice(liberoIndex, 1);
+                  } else if (temporaryOpstelling[i].prestaties[0].positie.startsWith('libero')) {
+                    const liberoIndex = temporaryOpstelling.indexOf(temporaryOpstelling[j]);
+                    temporaryOpstelling.splice(liberoIndex, 1);
+                  }
+                  else {
+                    zelfdeSpelerOpMeerderePosities = true;
+                  }
                 }
               }
             }
@@ -174,21 +182,44 @@ export class ResultatenComponent implements OnInit {
     for (let i = 0; i < spelers.length - 1; i++) {
       for (let j = i + 1; j < spelers.length; j++) {
 
-        const gecombineerdeWaarde = spelers[i].prestaties[0].percentageWinst + spelers[j].prestaties[0].percentageWinst;
+        let gecombineerdeWaarde = spelers[i].prestaties[0].percentageWinst + spelers[j].prestaties[0].percentageWinst;
         const combinatie: Array<Speler> = [];
-        combinatie.push(spelers[i]);
-        combinatie.push(spelers[j]);
 
+        if (!spelers[i].prestaties[0].positie.startsWith('libero')) {
+          combinatie.push(spelers[i]);
+        }
+        if (!spelers[j].prestaties[0].positie.startsWith('libero')) {
+          combinatie.push(spelers[j]);
+        }
+
+        for (let h = 0; h < spelers.length; h++) {
+          if (spelers[h].prestaties[0].positie.startsWith('libero')) {
+
+            const gemiddeldeWaarde = gecombineerdeWaarde / 2;
+
+            const gecombineerdeWaardeMetLibero = (gecombineerdeWaarde + spelers[h].prestaties[0].percentageWinst) / 3;
+
+            if (gecombineerdeWaardeMetLibero > gemiddeldeWaarde) {
+              combinatie.push(spelers[h]);
+              gecombineerdeWaarde = gecombineerdeWaardeMetLibero;
+            }
+          }
+        }
         result.push({ gecombineerdeWaarde: gecombineerdeWaarde, spelers: combinatie })
       }
     }
 
-    result = result.sort((a, b) => (a.gecombineerdeWaarde > b.gecombineerdeWaarde) ? -1 : 1); // sortering kan verkeerdom zijn.
+    result = result.sort((a, b) => (a.gecombineerdeWaarde > b.gecombineerdeWaarde) ? -1 : 1);
+
     return result;
   }
 
   // sortering met 1 item in array geeft geen problemen.
-  private sorteerSpelersOppercentageWinst(spelers: Array<Speler>): Array<Speler> {
+  private sorteerSpelersOpPercentageWinst(spelers: Array<Speler>): Array<Speler> {
     return spelers.sort((a, b) => (a.prestaties[0].percentageWinst > b.prestaties[0].percentageWinst) ? -1 : 1);
+  }
+
+  private isZelfdeSpeler(spelerA: Speler, spelerB: Speler): boolean {
+    return spelerA.voornaam === spelerB.voornaam && spelerA.achternaam === spelerB.achternaam;
   }
 }

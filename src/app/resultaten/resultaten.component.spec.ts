@@ -667,13 +667,13 @@ describe('ResultatenComponent', () => {
       spelersService.addSpeler(createSpeler(1, 'D', 66, 'midden'));
 
       const spelerE: Speler = createSpeler(1, 'E', 9, 'buiten');
-      spelerE.prestaties.push({positie: 'midden', setnummer: 1, percentageWinst: 59 });
-      spelerE.prestaties.push({positie: 'midden', setnummer: 1, percentageWinst: 18 });
-      spelerE.prestaties.push({positie: 'midden', setnummer: 1, percentageWinst: 35 });
-      spelerE.prestaties.push({positie: 'midden', setnummer: 1, percentageWinst: 26 });
-      spelerE.prestaties.push({positie: 'midden', setnummer: 1, percentageWinst: 72 });
-      spelerE.prestaties.push({positie: 'midden', setnummer: 1, percentageWinst: 10 });
-      spelerE.prestaties.push({positie: 'midden', setnummer: 1, percentageWinst: 43 });
+      spelerE.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 59 });
+      spelerE.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 18 });
+      spelerE.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 35 });
+      spelerE.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 26 });
+      spelerE.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 72 });
+      spelerE.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 10 });
+      spelerE.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 43 });
 
       spelersService.addSpeler(createSpeler(1, 'F', 67, 'buiten'));
       spelersService.addSpeler(createSpeler(1, 'G', 49, 'midden'));
@@ -692,6 +692,206 @@ describe('ResultatenComponent', () => {
       expect(result).toContain({ positie: 'buiten', voornaam: 'E', achternaam: 'E' });
       expect(result).toContain({ positie: 'buiten', voornaam: 'F', achternaam: 'F' });
       expect(result).toContain({ positie: 'midden', voornaam: 'G', achternaam: 'G' });
+    });
+  });
+
+  describe('libero ', () => {
+    describe('buiten', () => {
+
+      describe('possible without libero, impossible with', () => {
+        beforeEach(() => {
+          spelersService.addSpeler(createSpeler(1, 'A', 51, 'spelverdeler'));
+          spelersService.addSpeler(createSpeler(1, 'B', 50, 'diagonaal'));
+          spelersService.addSpeler(createSpeler(1, 'C', 33, 'midden'));
+
+          const spelerD: Speler = createSpeler(1, 'D', 66, 'midden');
+          spelerD.prestaties.push({setnummer: 1, positie: 'libero_buiten', percentageWinst: 99});
+
+          spelersService.addSpeler(createSpeler(1, 'E', 34, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'F', 67, 'buiten'));
+
+          spelersService.addSpeler(spelerD);
+        });
+
+        it('should provide the possible team', () => {
+          const result = component.vindBesteCombinatieBijSet(1);
+
+          expect(result.length).toBe(6);
+          expect(result).toContain({ positie: 'spelverdeler', voornaam: 'A', achternaam: 'A' });
+          expect(result).toContain({ positie: 'diagonaal', voornaam: 'B', achternaam: 'B' });
+          expect(result).toContain({ positie: 'midden', voornaam: 'C', achternaam: 'C' });
+          expect(result).toContain({ positie: 'midden', voornaam: 'D', achternaam: 'D' });
+          expect(result).toContain({ positie: 'buiten', voornaam: 'E', achternaam: 'E' });
+          expect(result).toContain({ positie: 'buiten', voornaam: 'F', achternaam: 'F' });
+        });
+      });
+
+      describe('als de buiten combinatie beter is met libero', () => {
+
+        beforeEach(() => {
+          spelersService.addSpeler(createSpeler(1, 'A', 51, 'spelverdeler'));
+          spelersService.addSpeler(createSpeler(1, 'B', 50, 'diagonaal'));
+          spelersService.addSpeler(createSpeler(1, 'C', 33, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'D', 66, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'E', 34, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'F', 67, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'G', 60, 'libero_buiten'));
+        });
+
+        it('geef de combinatie met libero', () => {
+          const result = component.vindBesteCombinatieBijSet(1);
+
+          expect(result.length).toBe(7);
+          expect(result).toContain({ positie: 'libero_buiten', voornaam: 'G', achternaam: 'G' });
+        });
+      });
+      describe('als de buiten combinatie slechter is met libero', () => {
+
+        beforeEach(() => {
+          spelersService.addSpeler(createSpeler(1, 'A', 51, 'spelverdeler'));
+          spelersService.addSpeler(createSpeler(1, 'B', 50, 'diagonaal'));
+          spelersService.addSpeler(createSpeler(1, 'C', 33, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'D', 66, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'E', 34, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'F', 67, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'G', 40, 'libero_buiten'));
+        });
+
+        it('geef de combinatie zonder libero', () => {
+          const result = component.vindBesteCombinatieBijSet(1);
+
+          expect(result.length).toBe(6);
+          expect(result).not.toContain({ positie: 'libero_buiten', voornaam: 'G', achternaam: 'G' });
+        });
+      });
+    });
+
+    describe('midden', () => {
+      describe('als de midden combinatie beter is met libero', () => {
+        beforeEach(() => {
+          spelersService.addSpeler(createSpeler(1, 'A', 51, 'spelverdeler'));
+          spelersService.addSpeler(createSpeler(1, 'B', 50, 'diagonaal'));
+          spelersService.addSpeler(createSpeler(1, 'C', 33, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'D', 66, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'E', 34, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'F', 67, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'G', 60, 'libero_midden'));
+        });
+        it('geef de combinatie met libero', () => {
+          const result = component.vindBesteCombinatieBijSet(1);
+
+          expect(result.length).toBe(7);
+          expect(result).toContain({ positie: 'libero_midden', voornaam: 'G', achternaam: 'G' });
+        });
+      });
+      describe('als de midden combinatie slechter is met libero', () => {
+        beforeEach(() => {
+          spelersService.addSpeler(createSpeler(1, 'A', 51, 'spelverdeler'));
+          spelersService.addSpeler(createSpeler(1, 'B', 50, 'diagonaal'));
+          spelersService.addSpeler(createSpeler(1, 'C', 33, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'D', 66, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'E', 34, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'F', 67, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'G', 40, 'libero_midden'));
+        });
+        it('geef de combinatie zonder libero', () => {
+          const result = component.vindBesteCombinatieBijSet(1);
+
+          expect(result.length).toBe(6);
+          expect(result).not.toContain({ positie: 'libero_midden', voornaam: 'G', achternaam: 'G' });
+        });
+      });
+    });
+
+    describe('buiten en midden', () => {
+      describe('als de buiten en midden beter zijn met libero', () => {
+        beforeEach(() => {
+          spelersService.addSpeler(createSpeler(1, 'A', 51, 'spelverdeler'));
+          spelersService.addSpeler(createSpeler(1, 'B', 50, 'diagonaal'));
+          spelersService.addSpeler(createSpeler(1, 'C', 33, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'D', 66, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'E', 34, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'F', 67, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'G', 60, 'libero_buiten'));
+          spelersService.addSpeler(createSpeler(1, 'H', 60, 'libero_midden'));
+        });
+        it('geef de combinatie met beide liberos', () => {
+          const result = component.vindBesteCombinatieBijSet(1);
+
+          expect(result.length).toBe(8);
+          expect(result).toContain({ positie: 'libero_buiten', voornaam: 'G', achternaam: 'G' });
+          expect(result).toContain({ positie: 'libero_midden', voornaam: 'H', achternaam: 'H' });
+        });
+      });
+      describe('als alleen de buiten combinatie beter is', () => {
+        beforeEach(() => {
+          spelersService.addSpeler(createSpeler(1, 'A', 51, 'spelverdeler'));
+          spelersService.addSpeler(createSpeler(1, 'B', 50, 'diagonaal'));
+          spelersService.addSpeler(createSpeler(1, 'C', 33, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'D', 66, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'E', 34, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'F', 67, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'G', 60, 'libero_buiten'));
+          spelersService.addSpeler(createSpeler(1, 'H', 40, 'libero_midden'));
+        });
+        it('geef de combinatie met de buiten libero', () => {
+          const result = component.vindBesteCombinatieBijSet(1);
+
+          expect(result.length).toBe(7);
+          expect(result).toContain({ positie: 'libero_buiten', voornaam: 'G', achternaam: 'G' });
+        });
+        it('geef de combinatie zonder de midden libero', () => {
+          const result = component.vindBesteCombinatieBijSet(1);
+
+          expect(result.length).toBe(7);
+          expect(result).not.toContain({ positie: 'libero_midden', voornaam: 'H', achternaam: 'H' });
+        });
+      });
+
+      describe('als alleen de midden combinatie beter is', () => {
+
+        beforeEach(() => {
+          spelersService.addSpeler(createSpeler(1, 'A', 51, 'spelverdeler'));
+          spelersService.addSpeler(createSpeler(1, 'B', 50, 'diagonaal'));
+          spelersService.addSpeler(createSpeler(1, 'C', 33, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'D', 66, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'E', 34, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'F', 67, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'G', 40, 'libero_buiten'));
+          spelersService.addSpeler(createSpeler(1, 'H', 60, 'libero_midden'));
+        });
+        it('geef de combinatie met midden libero', () => {
+          const result = component.vindBesteCombinatieBijSet(1);
+
+          expect(result.length).toBe(7);
+          expect(result).toContain({ positie: 'libero_midden', voornaam: 'H', achternaam: 'H' });
+        });
+        it('geef de combinatie zonder de buiten libero', () => {
+          const result = component.vindBesteCombinatieBijSet(1);
+
+          expect(result.length).toBe(7);
+          expect(result).not.toContain({ positie: 'libero_buiten', voornaam: 'G', achternaam: 'G' });
+        })
+      });
+      describe('als beide combinaties slechter zijn', () => {
+        beforeEach(() => {
+          spelersService.addSpeler(createSpeler(1, 'A', 51, 'spelverdeler'));
+          spelersService.addSpeler(createSpeler(1, 'B', 50, 'diagonaal'));
+          spelersService.addSpeler(createSpeler(1, 'C', 33, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'D', 66, 'midden'));
+          spelersService.addSpeler(createSpeler(1, 'E', 34, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'F', 67, 'buiten'));
+          spelersService.addSpeler(createSpeler(1, 'G', 40, 'libero_buiten'));
+          spelersService.addSpeler(createSpeler(1, 'H', 40, 'libero_midden'));
+        });
+        it('geef de combinatie zonder liberos', () => {
+          const result = component.vindBesteCombinatieBijSet(1);
+
+          expect(result.length).toBe(6);
+          expect(result).not.toContain({ positie: 'libero_buiten', voornaam: 'G', achternaam: 'G' });
+          expect(result).not.toContain({ positie: 'libero_midden', voornaam: 'H', achternaam: 'H' });
+        });
+      });
     });
   });
 
