@@ -44,6 +44,28 @@ export class SpelersComponent extends Form implements OnInit {
     return this.spelersService.getSpelers();
   }
 
-  ngOnInit() {}
+  // ngOnInit() {}
+
+  ngOnInit() {
+    this.spelersService.addSpeler(this.createSpeler(1, 'A', 51, 'spelverdeler'));
+    this.spelersService.addSpeler(this.createSpeler(1, 'B', 50, 'diagonaal'));
+    this.spelersService.addSpeler(this.createSpeler(1, 'C', 33, 'midden'));
+    this.spelersService.addSpeler(this.createSpeler(1, 'D', 66, 'midden'));
+    this.spelersService.addSpeler(this.createSpeler(1, 'E', 34, 'buiten'));
+    this.spelersService.addSpeler(this.createSpeler(1, 'F', 67, 'buiten'));
+  }
+
+  private createSpeler(setnummer: number, naam: string, percentageWinst: number, positie: string): Speler {
+    const speler: Speler = {
+      voornaam: naam,
+      achternaam: naam,
+      prestaties: [{
+        setnummer: setnummer,
+        percentageWinst: percentageWinst,
+        positie: positie
+      }]
+    };
+    return speler;
+  }
 
 }

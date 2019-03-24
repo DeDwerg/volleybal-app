@@ -1,3 +1,5 @@
-<!-- <div *ngFor="let speler of vindBesteCombinatie()">
-  {{speler.positie}} {{speler.speler.voornaam}} {{speler.speler.achternaam}}
-</div> -->
+<div *ngFor="let setnummer of [1,2,3,4,5]">
+  <div *ngFor="let speler of vindBesteCombinatieBijSet(setnummer)">
+    {{speler.positie}} {{speler.voornaam}} {{speler.achternaam}}
+  </div>
+</div>
