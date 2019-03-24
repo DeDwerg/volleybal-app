@@ -22,6 +22,7 @@ toevoegen
   </div>
 </form>
 
-<span *ngFor="let speler of getSpelers()" clas="col-3">
-  {{ speler.voornaam }} {{ speler.achternaam }}
-</span>
+Toegevoegde spelers:
+<div *ngFor="let speler of getSpelers()">
+  {{speler.voornaam}} {{speler.achternaam}}
+</div>

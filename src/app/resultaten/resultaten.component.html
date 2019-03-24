@@ -1,4 +1,6 @@
+Beste spelers:
 <div *ngFor="let setnummer of [1,2,3,4,5]">
+  set: {{setnummer}}
   <div *ngFor="let speler of vindBesteCombinatieBijSet(setnummer)">
     {{speler.positie}} {{speler.voornaam}} {{speler.achternaam}}
   </div>

@@ -14,8 +14,7 @@ export class ResultatenComponent implements OnInit {
     private spelersService: SpelersService
   ) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   private isZelfdePositieInZelfdeSetnummer(prestatieA: Prestatie, prestatieB: Prestatie): boolean {
     return prestatieA.positie === prestatieB.positie && prestatieA.setnummer === prestatieB.setnummer;
@@ -23,7 +22,7 @@ export class ResultatenComponent implements OnInit {
 
   vindBesteCombinatieBijSet(setnummer: number): Array<{ positie: string, voornaam: string, achternaam: string }> {
 
-    const spelers: Array<Speler> = this.spelersService.getSpelers();
+    const spelers: Array<Speler> = this.spelersService.getSpelersMetPrestaties();
 
     const spelersMet1Prestatie: Array<Speler> = [];
 

@@ -16,10 +16,13 @@ export class SpelersService {
   }
 
   addPrestatie(speler: Speler) {
-
   }
 
   getSpelers(): Array<Speler> {
+    return this.spelers;
+  }
+
+  getSpelersMetPrestaties(): Array<Speler> {
     let spelersToReturn: Array<Speler> = this.spelers;
     spelersToReturn.forEach(speler => {
       let unavailableSpelers = this.unavailableSpelers;
@@ -30,6 +33,17 @@ export class SpelersService {
         }
       });
     });
+
+    let aantalSpelersMetPrestaites = 0;
+    spelersToReturn.forEach(speler => {
+      if(speler.prestaties.length > 0) {
+        aantalSpelersMetPrestaites++;
+      }
+    });
+
+    if(aantalSpelersMetPrestaites < 6) {
+      return [];
+    }
     return spelersToReturn;
   }
 
