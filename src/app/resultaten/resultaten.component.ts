@@ -16,44 +16,11 @@ export class ResultatenComponent implements OnInit {
 
   ngOnInit() { }
 
-  private isZelfdePositieInZelfdeSetnummer(prestatieA: Prestatie, prestatieB: Prestatie): boolean {
-    return prestatieA.positie === prestatieB.positie && prestatieA.setnummer === prestatieB.setnummer;
-  }
-
   vindBesteCombinatieBijSet(setnummer: number): Array<{ positie: string, voornaam: string, achternaam: string }> {
 
     const spelers: Array<Speler> = this.spelersService.getSpelersMetPrestaties();
 
-    const spelersMet1Prestatie: Array<Speler> = [];
-
-    spelers.forEach(speler => {
-      if (speler.prestaties.length > 1) {
-        for (let i = 0; i < speler.prestaties.length - 1; i++) {
-          for (let j = i + 1; j < speler.prestaties.length; j++) {
-            if (this.isZelfdePositieInZelfdeSetnummer(speler.prestaties[i], speler.prestaties[j])) {
-              const indexI = speler.prestaties.indexOf(speler.prestaties[i]);
-              const indexJ = speler.prestaties.indexOf(speler.prestaties[j]);
-
-              const gemiddeldeGehaaldePunten = (speler.prestaties[i].percentageWinst + speler.prestaties[j].percentageWinst) / 2;
-              let gemiddeldePrestatie: Prestatie = { percentageWinst: gemiddeldeGehaaldePunten, setnummer: speler.prestaties[i].setnummer, positie: speler.prestaties[i].positie };
-              speler.prestaties.push(gemiddeldePrestatie);
-              speler.prestaties.splice(indexI, 1);
-              speler.prestaties.splice(indexJ, 1);
-            }
-          }
-        }
-        speler.prestaties.forEach(prestatie => {
-          if (prestatie.setnummer === setnummer) {
-            const spelerMet1Prestatie: Speler = { voornaam: speler.voornaam, achternaam: speler.achternaam, prestaties: [prestatie] };
-            spelersMet1Prestatie.push(spelerMet1Prestatie);
-          }
-        });
-      } else {
-        if (speler.prestaties[0].setnummer === setnummer) {
-          spelersMet1Prestatie.push(speler);
-        }
-      }
-    });
+    const spelersMet1Prestatie: Array<Speler> = this.transformNaarSpelersMet1Prestatie(spelers, setnummer);
 
     let buitenSpelers: Array<Speler> = [];
     let middenSpelers: Array<Speler> = [];
@@ -211,6 +178,40 @@ export class ResultatenComponent implements OnInit {
     return result;
   }
 
+  private transformNaarSpelersMet1Prestatie(spelers: Array<Speler>, setnummer: number): Array<Speler> {
+    const spelersMet1Prestatie: Array<Speler> = [];
+    spelers.forEach(speler => {
+      if (speler.prestaties.length > 1) {
+        for (let i = 0; i < speler.prestaties.length - 1; i++) {
+          for (let j = i + 1; j < speler.prestaties.length; j++) {
+            if (this.isZelfdePositieInZelfdeSetnummer(speler.prestaties[i], speler.prestaties[j])) {
+              const indexI = speler.prestaties.indexOf(speler.prestaties[i]);
+              const indexJ = speler.prestaties.indexOf(speler.prestaties[j]);
+
+              const gemiddeldeGehaaldePunten = (speler.prestaties[i].percentageWinst + speler.prestaties[j].percentageWinst) / 2;
+              let gemiddeldePrestatie: Prestatie = { percentageWinst: gemiddeldeGehaaldePunten, setnummer: speler.prestaties[i].setnummer, positie: speler.prestaties[i].positie };
+              speler.prestaties.push(gemiddeldePrestatie);
+              speler.prestaties.splice(indexI, 1);
+              speler.prestaties.splice(indexJ, 1);
+            }
+          }
+        }
+        speler.prestaties.forEach(prestatie => {
+          if (prestatie.setnummer === setnummer) {
+            const spelerMet1Prestatie: Speler = { voornaam: speler.voornaam, achternaam: speler.achternaam, prestaties: [prestatie] };
+            spelersMet1Prestatie.push(spelerMet1Prestatie);
+          }
+        });
+      } else {
+        if (speler.prestaties[0].setnummer === setnummer) {
+          spelersMet1Prestatie.push(speler);
+        }
+      }
+    });
+
+    return spelersMet1Prestatie;
+  }
+
   // sortering met 1 item in array geeft geen problemen.
   private sorteerSpelersOpPercentageWinst(spelers: Array<Speler>): Array<Speler> {
     return spelers.sort((a, b) => (a.prestaties[0].percentageWinst > b.prestaties[0].percentageWinst) ? -1 : 1);
@@ -218,5 +219,9 @@ export class ResultatenComponent implements OnInit {
 
   private isZelfdeSpeler(spelerA: Speler, spelerB: Speler): boolean {
     return spelerA.voornaam === spelerB.voornaam && spelerA.achternaam === spelerB.achternaam;
+  }
+
+  private isZelfdePositieInZelfdeSetnummer(prestatieA: Prestatie, prestatieB: Prestatie): boolean {
+    return prestatieA.positie === prestatieB.positie && prestatieA.setnummer === prestatieB.setnummer;
   }
 }
