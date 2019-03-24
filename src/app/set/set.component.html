@@ -1,14 +1,15 @@
-<!-- <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
   <label>eindstand</label>
-  <input type=text class="form-control" placeholder=zelf formControlName="standZelf"> - <input formControlName="standTegenstander" class="form-control" type=text placeholder=tegenstander>
+  <input type=text class="form-control" placeholder=zelf formControlName="standZelf">
+  <input formControlName="standTegenstander" class="form-control" type=text placeholder=tegenstander>
   <label>setnummer</label>
   <input type=number class="form-control" placeholder=0 formControlName="setnummer">
   <div class="form-group row" *ngFor="let speler of getSpelers()">
     <div>
-      <label formControlName="speler">{{ speler.voornaam }} {{ speler.achternaam }}</label>
+      <label>{{ speler.voornaam }} {{ speler.achternaam }}</label>
     </div>
     <div>
-      <select id="inputState" class="form-control" formControlName="positie">
+      <select id="inputState" class="form-control">
         <option selected>niet gespeeld</option>
         <option>spelverdeler</option>
         <option>buiten</option>
@@ -17,11 +18,23 @@
         <option>libero</option>
       </select>
     </div>
+    gewisseld voor
+    <div>
+      <select id="inputState" class="form-control">
+        <option selected>niet gewisseld</option>
+        <option *ngFor="let speler of getSpelers()">
+          {{speler.voornaam}} {{speler.achternaam}}
+        </option>
+      </select>
+    </div>
+    bij punten:
+    <input type=text class="form-control" placeholder=zelf>
+    <input class="form-control" type=text placeholder=tegenstander>
   </div>
   <div class="form-group row">
-      <button type="submit" id="btnSubmit" class="btn btn-secondary btn-block col-4">
-        Toevoegen
-        <span class="fa fa-angle-right ml-1"></span>
-      </button>
-    </div>
-</form> -->
+    <button type="submit" id="btnSubmit" class="btn btn-secondary btn-block col-4">
+      Toevoegen
+      <span class="fa fa-angle-right ml-1"></span>
+    </button>
+  </div>
+</form>

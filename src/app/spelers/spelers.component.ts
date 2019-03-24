@@ -38,6 +38,8 @@ export class SpelersComponent extends Form implements OnInit {
     const prestaties: Array<Prestatie> = [];
     const speler: Speler = { voornaam, achternaam, prestaties };
     this.spelersService.addSpeler(speler);
+
+    // add speler
   }
 
   getSpelers(): Array<Speler> {

@@ -33,13 +33,15 @@ export class SetComponent extends Form implements OnInit {
           speler: new FormControl(),
           positie: new FormControl()
         })
-      ])
+      ]),
+      speler: Speler
       // positie_speler.voornaam_speler.achternaam: []
     });
     super.createForm();
   }
 
   submitForm() {
+    // add prestatie
     console.log(this.form.get('standZelf').value);
     console.log(this.form.get('standTegenstander').value);
     console.log(this.form.get('setnummer').value);
