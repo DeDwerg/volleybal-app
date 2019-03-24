@@ -138,7 +138,7 @@ export class ResultatenComponent implements OnInit {
             for (let i = 0; i < temporaryOpstelling.length - 1; i++) {
               for (let j = i + 1; j < temporaryOpstelling.length; j++) {
                 if (this.isZelfdeSpeler(temporaryOpstelling[i], temporaryOpstelling[j])) {
-                  if(temporaryOpstelling[i].prestaties[0].positie.startsWith('libero')) {
+                  if (temporaryOpstelling[i].prestaties[0].positie.startsWith('libero')) {
                     const liberoIndex = temporaryOpstelling.indexOf(temporaryOpstelling[i]);
                     temporaryOpstelling.splice(liberoIndex, 1);
                   } else if (temporaryOpstelling[i].prestaties[0].positie.startsWith('libero')) {
@@ -195,11 +195,9 @@ export class ResultatenComponent implements OnInit {
         for (let h = 0; h < spelers.length; h++) {
           if (spelers[h].prestaties[0].positie.startsWith('libero')) {
 
-            const gemiddeldeWaarde = gecombineerdeWaarde / 2;
+            const gecombineerdeWaardeMetLibero = (gecombineerdeWaarde + spelers[h].prestaties[0].percentageWinst) / 3 * 2;
 
-            const gecombineerdeWaardeMetLibero = (gecombineerdeWaarde + spelers[h].prestaties[0].percentageWinst) / 3;
-
-            if (gecombineerdeWaardeMetLibero > gemiddeldeWaarde) {
+            if (gecombineerdeWaardeMetLibero > gecombineerdeWaarde) {
               combinatie.push(spelers[h]);
               gecombineerdeWaarde = gecombineerdeWaardeMetLibero;
             }
