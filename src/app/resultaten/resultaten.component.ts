@@ -203,8 +203,10 @@ export class ResultatenComponent implements OnInit {
           }
         });
       } else {
-        if (speler.prestaties[0].setnummer === setnummer) {
-          spelersMet1Prestatie.push(speler);
+        if (speler.prestaties.length !== 0) {
+          if (speler.prestaties[0].setnummer === setnummer) {
+            spelersMet1Prestatie.push(speler);
+          }
         }
       }
     });
