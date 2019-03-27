@@ -44,7 +44,9 @@ export class SetComponent extends Form implements OnInit {
         })
       ])
     });
+
     this.spelersPrestatie = this.form.get('spelersPrestatie') as FormArray;
+
     super.createForm();
   }
 
@@ -58,6 +60,7 @@ export class SetComponent extends Form implements OnInit {
   }
 
   getSpelers(): Array<Speler> {
+
     const spelers: Array<{ voornaam: string, achternaam: string }> = [];
     this.spelersPrestatie.controls.forEach((spelerPrestatie) => {
       if (spelerPrestatie.get('voornaam').value !== null && spelerPrestatie.get('achternaam').value !== null) {
@@ -66,6 +69,7 @@ export class SetComponent extends Form implements OnInit {
         this.spelersPrestatie.removeAt(this.spelersPrestatie.controls.indexOf(spelerPrestatie));
       }
     });
+
     this.spelersService.getSpelers().forEach((speler) => {
       let gevonden: boolean = false;
       spelers.forEach((naam) => {
@@ -73,8 +77,9 @@ export class SetComponent extends Form implements OnInit {
           gevonden = true;
         }
       });
+
       if (!gevonden) {
-        this.spelersPrestatie.controls.push(
+        this.spelersPrestatie.push(
           this.fb.group({
             positie: [],
             gewisseld: [],
