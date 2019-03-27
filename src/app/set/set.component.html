@@ -4,32 +4,36 @@
   <input formControlName="standTegenstander" class="form-control" type=text placeholder=tegenstander>
   <label>setnummer</label>
   <input type=number class="form-control" placeholder=0 formControlName="setnummer">
-  <div class="form-group row" *ngFor="let speler of getSpelers()">
-    <div>
-      <label>{{ speler.voornaam }} {{ speler.achternaam }}</label>
+  <div formArrayName="spelersPrestatie">
+    <div class="form-group row" *ngFor="let spelerPrestatie of getFormGroupSpelersThingie().controls; let i = index">
+      <div [formGroupName]="i">
+        <div>
+          <label>{{ spelerPrestatie.get('voornaam').value }} {{ spelerPrestatie.get('achternaam').value }}</label>
+        </div>
+        <div>
+          <select id="inputState" class="form-control" formControlName="positie">
+            <option selected>niet gespeeld</option>
+            <option>spelverdeler</option>
+            <option>buiten</option>
+            <option>midden</option>
+            <option>diagonaal</option>
+            <option>libero</option>
+          </select>
+        </div>
+        gewisseld voor
+        <div>
+          <select id="inputState" class="form-control" formControlName="gewisseld">
+            <option selected>niet gewisseld</option>
+            <option *ngFor="let speler of getSpelers()">
+              {{speler.voornaam}} {{speler.achternaam}}
+            </option>
+          </select>
+        </div>
+        bij punten:
+        <input type=text class="form-control col-2" placeholder=zelf formControlName="wisselstandZelf">
+        <input class="form-control col-2" type=text placeholder=tegenstander formControlName="wisselstandTegenstander">
+      </div>
     </div>
-    <div>
-      <select id="inputState" class="form-control">
-        <option selected>niet gespeeld</option>
-        <option>spelverdeler</option>
-        <option>buiten</option>
-        <option>midden</option>
-        <option>diagonaal</option>
-        <option>libero</option>
-      </select>
-    </div>
-    gewisseld voor
-    <div>
-      <select id="inputState" class="form-control">
-        <option selected>niet gewisseld</option>
-        <option *ngFor="let speler of getSpelers()">
-          {{speler.voornaam}} {{speler.achternaam}}
-        </option>
-      </select>
-    </div>
-    bij punten:
-    <input type=text class="form-control" placeholder=zelf>
-    <input class="form-control" type=text placeholder=tegenstander>
   </div>
   <div class="form-group row">
     <button type="submit" id="btnSubmit" class="btn btn-secondary btn-block col-4">

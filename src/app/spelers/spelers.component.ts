@@ -36,7 +36,7 @@ export class SpelersComponent extends Form implements OnInit {
     const voornaam: string = this.form.get('voornaam').value;
     const achternaam: string = this.form.get('achternaam').value;
     const prestaties: Array<Prestatie> = [];
-    const speler: Speler = { voornaam, achternaam, prestaties };
+    const speler: Speler = { voornaam: voornaam, achternaam: achternaam, prestaties: prestaties };
     this.spelersService.addSpeler(speler);
 
     // add speler
