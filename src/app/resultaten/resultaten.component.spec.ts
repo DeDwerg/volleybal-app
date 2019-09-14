@@ -924,5 +924,126 @@ describe('ResultatenComponent', () => {
     });
   });
 
+  // percentage winst = behaalde punten tegenover alle gespeelde punten
+  // 16 - 25 = tot van 41 waarvan 16 gewonnen -> 39.02%
+  // 17 - 25 = tot van 42 waarvan 17 gewonnen -> 40.47
+  // 19 - 25 = 43
+  // 25 - 16 = 61
 
+  describe('officiele resultaten aparte sets', () => {
+
+    beforeEach(() => {
+      const mark: Speler = createSpeler(1, 'Mark', 40, 'spelverdeler');
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 2, percentageWinst: 61 });
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 3, percentageWinst: 40 });
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 4, percentageWinst: 43 });
+
+      const bart: Speler = createSpeler(1, 'Bart', 40, 'midden');
+      bart.prestaties.push({ positie: 'midden', setnummer: 2, percentageWinst: 61 });
+      bart.prestaties.push({ positie: 'midden', setnummer: 3, percentageWinst: 40 });
+      bart.prestaties.push({ positie: 'midden', setnummer: 4, percentageWinst: 43 });
+
+      const dimitri: Speler = createSpeler(1, 'Dimitri', 40, 'diagonaal');
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 2, percentageWinst: 61 });
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 3, percentageWinst: 40 });
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 4, percentageWinst: 43 });
+
+      const ryan: Speler = createSpeler(1, 'Ryan', 40, 'buiten');
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 2, percentageWinst: 61 });
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 3, percentageWinst: 40 });
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 4, percentageWinst: 43 });
+
+      const tijn: Speler = createSpeler(1, 'Tijn', 40, 'midden');
+      tijn.prestaties.push({ positie: 'midden', setnummer: 2, percentageWinst: 61 });
+      tijn.prestaties.push({ positie: 'midden', setnummer: 3, percentageWinst: 40 });
+      tijn.prestaties.push({ positie: 'midden', setnummer: 4, percentageWinst: 43 });
+
+      const casper: Speler = createSpeler(1, 'Casper', 40, 'buiten');
+      casper.prestaties.push({ positie: 'buiten', setnummer: 2, percentageWinst: 61 });
+      casper.prestaties.push({ positie: 'buiten', setnummer: 3, percentageWinst: 40 });
+      casper.prestaties.push({ positie: 'buiten', setnummer: 4, percentageWinst: 43 });
+
+      spelersService.addSpeler(mark);
+      spelersService.addSpeler(bart);
+      spelersService.addSpeler(dimitri);
+      spelersService.addSpeler(ryan);
+      spelersService.addSpeler(tijn);
+      spelersService.addSpeler(casper);
+    });
+
+    it('geeft de beste opstellingen', () => {
+      const opstellingSet1 = component.vindBesteCombinatieBijSet(1);
+      console.log('opstelling set 1');
+      console.log(opstellingSet1);
+
+      const opstellingSet2 = component.vindBesteCombinatieBijSet(2);
+      console.log('opstelling set 2');
+      console.log(opstellingSet2);
+
+      const opstellingSet3 = component.vindBesteCombinatieBijSet(3);
+      console.log('opstelling set 3');
+      console.log(opstellingSet3);
+
+      const opstellingSet4 = component.vindBesteCombinatieBijSet(4);
+      console.log('opstelling set 4');
+      console.log(opstellingSet4);
+    });
+  });
+
+  describe('officiele resultaten overall', () => {
+
+    beforeEach(() => {
+      const mark: Speler = createSpeler(1, 'Mark', 40, 'spelverdeler');
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 1, percentageWinst: 61 });
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 1, percentageWinst: 40 });
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 1, percentageWinst: 43 });
+
+      const bart: Speler = createSpeler(1, 'Bart', 40, 'midden');
+      bart.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 61 });
+      bart.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 40 });
+      bart.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 43 });
+
+      const dimitri: Speler = createSpeler(1, 'Dimitri', 40, 'diagonaal');
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 1, percentageWinst: 61 });
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 1, percentageWinst: 40 });
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 1, percentageWinst: 43 });
+
+      const ryan: Speler = createSpeler(1, 'Ryan', 40, 'buiten');
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 61 });
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 40 });
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 43 });
+
+      const tijn: Speler = createSpeler(1, 'Tijn', 40, 'spelverdeler');
+      tijn.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 61 });
+      tijn.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 40 });
+      tijn.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 43 });
+
+      const casper: Speler = createSpeler(1, 'Casper', 40, 'buiten');
+      casper.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 61 });
+      casper.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 40 });
+      casper.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 43 });
+
+      spelersService.addSpeler(mark);
+      spelersService.addSpeler(bart);
+      spelersService.addSpeler(dimitri);
+      spelersService.addSpeler(ryan);
+      spelersService.addSpeler(tijn);
+      spelersService.addSpeler(casper);
+    });
+
+    it('geeft de beste opstellingen', () => {
+      const opstellingSet1 = component.vindBesteCombinatieBijSet(1);
+      console.log('beste opstelling overall');
+      console.log(opstellingSet1);
+    });
+  });
+
+  // aantal sets aanwezig - aantal sets gespeeld - percentage gespeeld
+  // bart     4 4 100
+  // casper   4 4 100
+  // mark     4 4 100
+  // tijn     4 4 100
+  // dimitri  4 4 100
+  // ryan     4 4 100
+  // thomas
 });
