@@ -705,7 +705,7 @@ describe('ResultatenComponent', () => {
           spelersService.addSpeler(createSpeler(1, 'C', 33, 'midden'));
 
           const spelerD: Speler = createSpeler(1, 'D', 66, 'midden');
-          spelerD.prestaties.push({setnummer: 1, positie: 'libero_buiten', percentageWinst: 99});
+          spelerD.prestaties.push({ setnummer: 1, positie: 'libero_buiten', percentageWinst: 99 });
 
           spelersService.addSpeler(createSpeler(1, 'E', 34, 'buiten'));
           spelersService.addSpeler(createSpeler(1, 'F', 67, 'buiten'));
@@ -925,43 +925,85 @@ describe('ResultatenComponent', () => {
   });
 
   // percentage winst = behaalde punten tegenover alle gespeelde punten
+  // 15 - 10 = 60
   // 16 - 25 = tot van 41 waarvan 16 gewonnen -> 39.02%
   // 17 - 25 = tot van 42 waarvan 17 gewonnen -> 40.47
   // 19 - 25 = 43
+  // 21 - 25 = 46
+  // 24 - 26 = 48
   // 25 - 16 = 61
+  // 25 - 21 = 54
+  // 26 - 24 = 52
 
   describe('officiele resultaten aparte sets', () => {
 
     beforeEach(() => {
+      // smashing velsen
       const mark: Speler = createSpeler(1, 'Mark', 40, 'spelverdeler');
       mark.prestaties.push({ positie: 'spelverdeler', setnummer: 2, percentageWinst: 61 });
       mark.prestaties.push({ positie: 'spelverdeler', setnummer: 3, percentageWinst: 40 });
       mark.prestaties.push({ positie: 'spelverdeler', setnummer: 4, percentageWinst: 43 });
+      // vcc
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 1, percentageWinst: 52 });
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 2, percentageWinst: 48 });
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 3, percentageWinst: 54 });
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 4, percentageWinst: 46 });
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 5, percentageWinst: 60 });
 
       const bart: Speler = createSpeler(1, 'Bart', 40, 'midden');
       bart.prestaties.push({ positie: 'midden', setnummer: 2, percentageWinst: 61 });
       bart.prestaties.push({ positie: 'midden', setnummer: 3, percentageWinst: 40 });
       bart.prestaties.push({ positie: 'midden', setnummer: 4, percentageWinst: 43 });
 
+      bart.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 52 });
+      bart.prestaties.push({ positie: 'midden', setnummer: 2, percentageWinst: 48 });
+      bart.prestaties.push({ positie: 'midden', setnummer: 3, percentageWinst: 54 });
+      bart.prestaties.push({ positie: 'midden', setnummer: 4, percentageWinst: 46 });
+      bart.prestaties.push({ positie: 'midden', setnummer: 5, percentageWinst: 60 });
+
       const dimitri: Speler = createSpeler(1, 'Dimitri', 40, 'diagonaal');
       dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 2, percentageWinst: 61 });
       dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 3, percentageWinst: 40 });
       dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 4, percentageWinst: 43 });
+
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 1, percentageWinst: 52 });
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 2, percentageWinst: 48 });
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 3, percentageWinst: 54 });
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 4, percentageWinst: 46 });
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 5, percentageWinst: 60 });
 
       const ryan: Speler = createSpeler(1, 'Ryan', 40, 'buiten');
       ryan.prestaties.push({ positie: 'buiten', setnummer: 2, percentageWinst: 61 });
       ryan.prestaties.push({ positie: 'buiten', setnummer: 3, percentageWinst: 40 });
       ryan.prestaties.push({ positie: 'buiten', setnummer: 4, percentageWinst: 43 });
 
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 52 });
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 2, percentageWinst: 48 });
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 3, percentageWinst: 54 });
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 4, percentageWinst: 46 });
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 5, percentageWinst: 60 });
+
       const tijn: Speler = createSpeler(1, 'Tijn', 40, 'midden');
       tijn.prestaties.push({ positie: 'midden', setnummer: 2, percentageWinst: 61 });
       tijn.prestaties.push({ positie: 'midden', setnummer: 3, percentageWinst: 40 });
       tijn.prestaties.push({ positie: 'midden', setnummer: 4, percentageWinst: 43 });
 
+      tijn.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 52 });
+      tijn.prestaties.push({ positie: 'midden', setnummer: 2, percentageWinst: 48 });
+      tijn.prestaties.push({ positie: 'midden', setnummer: 3, percentageWinst: 54 });
+      tijn.prestaties.push({ positie: 'midden', setnummer: 4, percentageWinst: 46 });
+      tijn.prestaties.push({ positie: 'midden', setnummer: 5, percentageWinst: 60 });
+
       const casper: Speler = createSpeler(1, 'Casper', 40, 'buiten');
       casper.prestaties.push({ positie: 'buiten', setnummer: 2, percentageWinst: 61 });
       casper.prestaties.push({ positie: 'buiten', setnummer: 3, percentageWinst: 40 });
       casper.prestaties.push({ positie: 'buiten', setnummer: 4, percentageWinst: 43 });
+
+      casper.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 52 });
+      casper.prestaties.push({ positie: 'buiten', setnummer: 2, percentageWinst: 48 });
+      casper.prestaties.push({ positie: 'buiten', setnummer: 3, percentageWinst: 54 });
+      casper.prestaties.push({ positie: 'buiten', setnummer: 4, percentageWinst: 46 });
+      casper.prestaties.push({ positie: 'buiten', setnummer: 5, percentageWinst: 60 });
 
       spelersService.addSpeler(mark);
       spelersService.addSpeler(bart);
@@ -987,41 +1029,82 @@ describe('ResultatenComponent', () => {
       const opstellingSet4 = component.vindBesteCombinatieBijSet(4);
       console.log('opstelling set 4');
       console.log(opstellingSet4);
+
+      const opstellingSet5 = component.vindBesteCombinatieBijSet(5);
+      console.log('opstelling set 5');
+      console.log(opstellingSet5);
     });
   });
 
   describe('officiele resultaten overall', () => {
 
     beforeEach(() => {
+      // smashing velsen
       const mark: Speler = createSpeler(1, 'Mark', 40, 'spelverdeler');
       mark.prestaties.push({ positie: 'spelverdeler', setnummer: 1, percentageWinst: 61 });
       mark.prestaties.push({ positie: 'spelverdeler', setnummer: 1, percentageWinst: 40 });
       mark.prestaties.push({ positie: 'spelverdeler', setnummer: 1, percentageWinst: 43 });
+      // vcc
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 1, percentageWinst: 52 });
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 1, percentageWinst: 48 });
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 1, percentageWinst: 54 });
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 1, percentageWinst: 46 });
+      mark.prestaties.push({ positie: 'spelverdeler', setnummer: 1, percentageWinst: 60 });
 
       const bart: Speler = createSpeler(1, 'Bart', 40, 'midden');
       bart.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 61 });
       bart.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 40 });
       bart.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 43 });
 
+      bart.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 52 });
+      bart.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 48 });
+      bart.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 54 });
+      bart.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 46 });
+      bart.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 60 });
+
       const dimitri: Speler = createSpeler(1, 'Dimitri', 40, 'diagonaal');
       dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 1, percentageWinst: 61 });
       dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 1, percentageWinst: 40 });
       dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 1, percentageWinst: 43 });
+
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 1, percentageWinst: 52 });
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 1, percentageWinst: 48 });
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 1, percentageWinst: 54 });
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 1, percentageWinst: 46 });
+      dimitri.prestaties.push({ positie: 'diagonaal', setnummer: 1, percentageWinst: 60 });
 
       const ryan: Speler = createSpeler(1, 'Ryan', 40, 'buiten');
       ryan.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 61 });
       ryan.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 40 });
       ryan.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 43 });
 
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 52 });
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 48 });
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 54 });
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 46 });
+      ryan.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 60 });
+
       const tijn: Speler = createSpeler(1, 'Tijn', 40, 'spelverdeler');
       tijn.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 61 });
       tijn.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 40 });
       tijn.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 43 });
 
+      tijn.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 52 });
+      tijn.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 48 });
+      tijn.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 54 });
+      tijn.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 46 });
+      tijn.prestaties.push({ positie: 'midden', setnummer: 1, percentageWinst: 60 });
+
       const casper: Speler = createSpeler(1, 'Casper', 40, 'buiten');
       casper.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 61 });
       casper.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 40 });
       casper.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 43 });
+
+      casper.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 52 });
+      casper.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 48 });
+      casper.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 54 });
+      casper.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 46 });
+      casper.prestaties.push({ positie: 'buiten', setnummer: 1, percentageWinst: 60 });
 
       spelersService.addSpeler(mark);
       spelersService.addSpeler(bart);
@@ -1039,11 +1122,11 @@ describe('ResultatenComponent', () => {
   });
 
   // aantal sets aanwezig - aantal sets gespeeld - percentage gespeeld
-  // bart     4 4 100
-  // casper   4 4 100
-  // mark     4 4 100
-  // tijn     4 4 100
-  // dimitri  4 4 100
-  // ryan     4 4 100
+  // bart     8 8 100
+  // casper   8 8 100
+  // mark     8 8 100
+  // tijn     8 8 100
+  // dimitri  8 8 100
+  // ryan     8 8 100
   // thomas
 });

@@ -15,7 +15,12 @@ export class SpelersService {
     this.spelers.push(speler);
   }
 
-  addPrestatie(speler: Speler) {
+  addPrestatie(spelerMetNieuwePrestatie: Speler) {
+    this.spelers.forEach((speler) => {
+      if(speler.voornaam === spelerMetNieuwePrestatie.voornaam && speler.achternaam === spelerMetNieuwePrestatie.achternaam) {
+        speler.prestaties.push(spelerMetNieuwePrestatie.prestaties[0]);
+      }
+    });
   }
 
   getSpelers(): Array<Speler> {
