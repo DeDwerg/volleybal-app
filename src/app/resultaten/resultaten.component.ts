@@ -16,6 +16,10 @@ export class ResultatenComponent implements OnInit {
 
   ngOnInit() { }
 
+  getPercentageWinst(eigenStand: number, scoreTegenstander: number): number {
+    return (eigenStand * 100) / (eigenStand + scoreTegenstander);
+  }
+
   vindBesteCombinatieBijSet(setnummer: number): Array<{ positie: string, voornaam: string, achternaam: string }> {
 
     const spelers: Array<Speler> = this.spelersService.getSpelersMetPrestaties();
