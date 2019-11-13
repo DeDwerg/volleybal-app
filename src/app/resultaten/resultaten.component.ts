@@ -183,38 +183,46 @@ export class ResultatenComponent implements OnInit {
   }
 
   private transformNaarSpelersMet1Prestatie(spelers: Array<Speler>, setnummer: number): Array<Speler> {
-    const spelersMet1Prestatie: Array<Speler> = [];
-    spelers.forEach(speler => {
-      if (speler.prestaties.length > 1) {
-        for (let i = 0; i < speler.prestaties.length - 1; i++) {
-          for (let j = i + 1; j < speler.prestaties.length; j++) {
-            if (this.isZelfdePositieInZelfdeSetnummer(speler.prestaties[i], speler.prestaties[j])) {
-              const indexI = speler.prestaties.indexOf(speler.prestaties[i]);
-              const indexJ = speler.prestaties.indexOf(speler.prestaties[j]);
 
-              const gemiddeldeGehaaldePunten = (speler.prestaties[i].percentageWinst + speler.prestaties[j].percentageWinst) / 2;
-              let gemiddeldePrestatie: Prestatie = { percentageWinst: gemiddeldeGehaaldePunten, setnummer: speler.prestaties[i].setnummer, positie: speler.prestaties[i].positie };
-              speler.prestaties.push(gemiddeldePrestatie);
-              speler.prestaties.splice(indexI, 1);
-              speler.prestaties.splice(indexJ, 1);
+    const spelersMet1Prestatie: Array<Speler> = [];
+    const posities: Array<String> = [];
+    posities.push('buiten');
+    posities.push('libero_buiten');
+    posities.push('midden');
+    posities.push('libero_midden');
+    posities.push('spelverdeler');
+    posities.push('diagonaal');
+    if (spelers.length > 0) {
+      spelers.forEach(speler => {
+        posities.forEach(positie => {
+          const gevondenZelfdePrestaties: Array<Prestatie> = [];
+          speler.prestaties.forEach(prestatie => {
+            if (positie === prestatie.positie && prestatie.setnummer === setnummer) {
+              gevondenZelfdePrestaties.push(prestatie);
             }
-          }
-        }
-        speler.prestaties.forEach(prestatie => {
-          if (prestatie.setnummer === setnummer) {
-            const spelerMet1Prestatie: Speler = { voornaam: speler.voornaam, achternaam: speler.achternaam, prestaties: [prestatie] };
-            spelersMet1Prestatie.push(spelerMet1Prestatie);
+          });
+
+          if (gevondenZelfdePrestaties.length > 0) {
+            let totaal = 0;
+            gevondenZelfdePrestaties.forEach(prestatie => {
+              totaal = totaal + prestatie.percentageWinst;
+            });
+            const gemiddelde = totaal / gevondenZelfdePrestaties.length;
+
+            const nieuwePrestatie: Prestatie = new Prestatie();
+            nieuwePrestatie.percentageWinst = gemiddelde;
+            nieuwePrestatie.positie = gevondenZelfdePrestaties[0].positie;
+            nieuwePrestatie.setnummer = gevondenZelfdePrestaties[0].setnummer;
+
+            const nieuweSpelerMet1Prestatie: Speler = new Speler();
+            nieuweSpelerMet1Prestatie.achternaam = speler.achternaam;
+            nieuweSpelerMet1Prestatie.voornaam = speler.voornaam;
+            nieuweSpelerMet1Prestatie.prestaties = [nieuwePrestatie];
+            spelersMet1Prestatie.push(nieuweSpelerMet1Prestatie);
           }
         });
-      } else {
-        if (speler.prestaties.length !== 0) {
-          if (speler.prestaties[0].setnummer === setnummer) {
-            spelersMet1Prestatie.push(speler);
-          }
-        }
-      }
-    });
-
+      });
+    }
     return spelersMet1Prestatie;
   }
 
