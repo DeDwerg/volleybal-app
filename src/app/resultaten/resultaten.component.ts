@@ -234,8 +234,4 @@ export class ResultatenComponent implements OnInit {
   private isZelfdeSpeler(spelerA: Speler, spelerB: Speler): boolean {
     return spelerA.voornaam === spelerB.voornaam && spelerA.achternaam === spelerB.achternaam;
   }
-
-  private isZelfdePositieInZelfdeSetnummer(prestatieA: Prestatie, prestatieB: Prestatie): boolean {
-    return prestatieA.positie === prestatieB.positie && prestatieA.setnummer === prestatieB.setnummer;
-  }
 }
