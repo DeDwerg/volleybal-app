@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SpelersService } from '../spelers/spelers.service';
 import { Speler } from '../spelers/speler.model';
 import { Prestatie } from '../spelers/prestatie.model';
+import { Positie } from '../spelers/positie.enum';
 
 @Component({
   selector: 'app-resultaten',
@@ -11,7 +12,7 @@ import { Prestatie } from '../spelers/prestatie.model';
 export class ResultatenComponent implements OnInit {
 
   constructor(
-    private spelersService: SpelersService
+    private spelersService: SpelersService,
   ) { }
 
   ngOnInit() { }
@@ -33,21 +34,21 @@ export class ResultatenComponent implements OnInit {
 
     spelersMet1Prestatie.forEach(speler => {
       switch (speler.prestaties[0].positie) {
-        case 'buiten':
+        case Positie.buiten:
         case 'libero_buiten':
           buitenSpelers.push(speler);
           buitenSpelers = this.sorteerSpelersOpPercentageWinst(buitenSpelers);
           break;
-        case 'midden':
+        case Positie.midden:
         case 'libero_midden':
           middenSpelers.push(speler);
           middenSpelers = this.sorteerSpelersOpPercentageWinst(middenSpelers);
           break;
-        case 'spelverdeler':
+        case Positie.spelverdeler:
           spelverdelers.push(speler);
           spelverdelers = this.sorteerSpelersOpPercentageWinst(spelverdelers);
           break;
-        case 'diagonaal':
+        case Positie.diagonaal:
           diagonalen.push(speler);
           diagonalen = this.sorteerSpelersOpPercentageWinst(diagonalen);
           break;
@@ -186,12 +187,12 @@ export class ResultatenComponent implements OnInit {
 
     const spelersMet1Prestatie: Array<Speler> = [];
     const posities: Array<String> = [];
-    posities.push('buiten');
+    posities.push(Positie.buiten);
     posities.push('libero_buiten');
-    posities.push('midden');
+    posities.push(Positie.midden);
     posities.push('libero_midden');
-    posities.push('spelverdeler');
-    posities.push('diagonaal');
+    posities.push(Positie.spelverdeler);
+    posities.push(Positie.diagonaal);
     if (spelers.length > 0) {
       spelers.forEach(speler => {
         posities.forEach(positie => {

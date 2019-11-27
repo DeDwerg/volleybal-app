@@ -3,6 +3,8 @@ import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing'
 import { ResultatenComponent } from './resultaten.component';
 import { SpelersService } from '../spelers/spelers.service';
 import { Speler } from '../spelers/speler.model';
+import { Positie } from '../spelers/positie.enum';
+import { Prestatie } from '../spelers/prestatie.model';
 
 describe('ResultatenComponent', () => {
   let component: ResultatenComponent;
@@ -35,6 +37,14 @@ describe('ResultatenComponent', () => {
       }]
     };
     return speler;
+  }
+
+  function createSpeler2(voornaam: string): Speler {
+    return {
+      achternaam: '',
+      voornaam: voornaam,
+      prestaties: []
+    }
   }
 
   describe('initialSetup', () => {
@@ -163,14 +173,19 @@ describe('ResultatenComponent', () => {
       spelersService.addSpeler(createSpeler(1, 'B', 50, 'diagonaal'));
 
       const spelerC: Speler = createSpeler(1, 'C', 33, 'midden');
-      spelerC.prestaties.push({ percentageWinst: 48, setnummer: 1, positie: 'buiten' });
+      spelersService.addSpeler(spelerC);
+
+      const prestatie: Prestatie = {
+        percentageWinst: 47,
+        positie: Positie.buiten,
+        setnummer: 1
+      };
+      spelersService.addPrestatie(spelerC, prestatie);
 
       spelersService.addSpeler(createSpeler(1, 'D', 66, 'midden'));
       spelersService.addSpeler(createSpeler(1, 'E', 34, 'buiten'));
       spelersService.addSpeler(createSpeler(1, 'F', 67, 'buiten'));
       spelersService.addSpeler(createSpeler(1, 'G', 49, 'midden'));
-
-      spelersService.addSpeler(spelerC);
     });
 
     it('should return the best combinations', () => {
@@ -960,7 +975,86 @@ describe('ResultatenComponent', () => {
   // 24 - 26 = 48
   // 25 - 16 = 61
   // 25 - 21 = 54
+  // 25 - 22 = 53
   // 26 - 24 = 52
+
+
+  // soort echte test voor schrijven
+  //   const resultaat: Map<Map<string, string>, Positie> = new Map();
+  //   resultaat.set(new Map<string, string>().set('A','A'), Positie.spelverdeler);
+  //   resultaat.set(new Map<string, string>().set('B','B'), Positie.diagonaal);
+  //   resultaat.set(new Map<string, string>().set('C','C'), Positie.midden);
+  //   resultaat.set(new Map<string, string>().set('D','D'), Positie.midden);
+  //   resultaat.set(new Map<string, string>().set('E','E'), Positie.buiten);
+  //   resultaat.set(new Map<string, string>().set('F','F'), Positie.buiten);
+  //   resultaat.set(new Map<string, string>().set('G','G'), Positie.midden);
+
+  //   spelersService.addSetResultaat()
+
+  // // const kaas: Map<Map<string, string>, Positie> = new Map();
+  // // kaas.set(new Map<string, string>().set('',''), Positie.spelverdeler);
+
+  // // spelersService.addSetResultaat(1, 25, 12, kaas)
+
+  describe('offiele resultaten test', () => {
+
+    beforeEach(() => {
+
+      spelersService.addSpeler(createSpeler2('Mark'));
+      spelersService.addSpeler(createSpeler2('Dimitri'));
+      spelersService.addSpeler(createSpeler2('Bart'));
+      spelersService.addSpeler(createSpeler2('Tijn'));
+      spelersService.addSpeler(createSpeler2('Ryan'));
+      spelersService.addSpeler(createSpeler2('Casper'));
+      spelersService.addSpeler(createSpeler2('Thomas'));
+      spelersService.addSpeler(createSpeler2('Mehmet'));
+
+      const resultaat: Array<{ voornaam: string, achternaam: string, positie: Positie }> = [];
+      resultaat.push({ voornaam: 'Mark', achternaam: '', positie: Positie.spelverdeler })
+      resultaat.push({ voornaam: 'Dimitri', achternaam: '', positie: Positie.diagonaal })
+      resultaat.push({ voornaam: 'Bart', achternaam: '', positie: Positie.midden })
+      resultaat.push({ voornaam: 'Tijn', achternaam: '', positie: Positie.midden })
+      resultaat.push({ voornaam: 'Ryan', achternaam: '', positie: Positie.buiten })
+      resultaat.push({ voornaam: 'Casper', achternaam: '', positie: Positie.buiten })
+
+      const resultaat2: Array<{ voornaam: string, achternaam: string, positie: Positie }> = [];
+      resultaat2.push({ voornaam: 'Mark', achternaam: '', positie: Positie.spelverdeler })
+      resultaat2.push({ voornaam: 'Dimitri', achternaam: '', positie: Positie.diagonaal })
+      resultaat2.push({ voornaam: 'Bart', achternaam: '', positie: Positie.midden })
+      resultaat2.push({ voornaam: 'Tijn', achternaam: '', positie: Positie.midden })
+      resultaat2.push({ voornaam: 'Ryan', achternaam: '', positie: Positie.buiten })
+      resultaat2.push({ voornaam: 'Casper', achternaam: '', positie: Positie.buiten })
+
+      const resultaat3: Array<{ voornaam: string, achternaam: string, positie: Positie }> = [];
+      resultaat3.push({ voornaam: 'Mark', achternaam: '', positie: Positie.spelverdeler })
+      resultaat3.push({ voornaam: 'Dimitri', achternaam: '', positie: Positie.diagonaal })
+      resultaat3.push({ voornaam: 'Bart', achternaam: '', positie: Positie.midden })
+      resultaat3.push({ voornaam: 'Thomas', achternaam: '', positie: Positie.midden })
+      resultaat3.push({ voornaam: 'Mehmet', achternaam: '', positie: Positie.buiten })
+      resultaat3.push({ voornaam: 'Casper', achternaam: '', positie: Positie.buiten })
+
+      spelersService.addSetResultaat(1, 17, 25, resultaat); //percentage ‭40,47619047619047619047619047619‬
+      spelersService.addSetResultaat(1, 26, 24, resultaat2); // 52
+      spelersService.addSetResultaat(1, 25, 22, resultaat3); // ‭53,191489361702127659574468085106‬
+    });
+
+    fit('should set the right results', () => {
+
+      const result = component.vindBesteCombinatieBijSet(1);
+
+      spelersService.getSpelers().forEach((speler) => {
+        console.log(speler.prestaties);
+      });
+
+      expect(result.length).toBe(6);
+      expect(result).toContain({ positie: Positie.spelverdeler, voornaam: 'Mark', achternaam: '' });
+      expect(result).toContain({ positie: Positie.diagonaal, voornaam: 'Dimitri', achternaam: '' });
+      expect(result).toContain({ positie: Positie.midden, voornaam: 'Thomas', achternaam: '' });
+      expect(result).toContain({ positie: Positie.midden, voornaam: 'Bart', achternaam: '' });
+      expect(result).toContain({ positie: Positie.buiten, voornaam: 'Mehmet', achternaam: '' });
+      expect(result).toContain({ positie: Positie.buiten, voornaam: 'Casper', achternaam: '' });
+    });
+  });
 
   describe('officiele resultaten aparte sets', () => {
 
@@ -1080,21 +1174,21 @@ describe('ResultatenComponent', () => {
       console.log('opstelling set 1');
       console.log(opstellingSet1);
 
-      const opstellingSet2 = component.vindBesteCombinatieBijSet(2);
-      console.log('opstelling set 2');
-      console.log(opstellingSet2);
+      // const opstellingSet2 = component.vindBesteCombinatieBijSet(2);
+      // console.log('opstelling set 2');
+      // console.log(opstellingSet2);
 
-      const opstellingSet3 = component.vindBesteCombinatieBijSet(3);
-      console.log('opstelling set 3');
-      console.log(opstellingSet3);
+      // const opstellingSet3 = component.vindBesteCombinatieBijSet(3);
+      // console.log('opstelling set 3');
+      // console.log(opstellingSet3);
 
-      const opstellingSet4 = component.vindBesteCombinatieBijSet(4);
-      console.log('opstelling set 4');
-      console.log(opstellingSet4);
+      // const opstellingSet4 = component.vindBesteCombinatieBijSet(4);
+      // console.log('opstelling set 4');
+      // console.log(opstellingSet4);
 
-      const opstellingSet5 = component.vindBesteCombinatieBijSet(5);
-      console.log('opstelling set 5');
-      console.log(opstellingSet5);
+      // const opstellingSet5 = component.vindBesteCombinatieBijSet(5);
+      // console.log('opstelling set 5');
+      // console.log(opstellingSet5);
     });
   });
 
@@ -1219,13 +1313,14 @@ describe('ResultatenComponent', () => {
   });
 
   // aantal sets aanwezig - aantal sets gespeeld - percentage gespeeld
-  // totaal   31 sets gespeeld
-  // dimitri  27 24.25  90
-  // mehmet   22 19.5   89
+  // totaal   35 sets gespeeld
+
+  // mehmet   26 23.25  89
   // bart     31 27.5   89
-  // casper   31 27     87
-  // tijn     27 21.75  81
-  // ryan     31 25     81
-  // mark     31 24.75  80
-  // thomas   22 16.25  74
+  // dimitri  31 27.25  88
+  // casper   35 30.25  86
+  // tijn     31 25.75  83
+  // mark     35 28.75  82
+  // ryan     35 28     80
+  // thomas   26 20.25  78
 });
